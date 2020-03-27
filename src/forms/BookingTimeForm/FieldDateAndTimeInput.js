@@ -120,17 +120,17 @@ const getAllTimeValues = (
   const startTimes = selectedStartTime
     ? []
     : getAvailableStartTimes(
-        intl,
-        timeZone,
-        startDate,
-        getTimeSlots(timeSlots, startDate, timeZone)
-      );
+      intl,
+      timeZone,
+      startDate,
+      getTimeSlots(timeSlots, startDate, timeZone)
+    );
 
   const startTime = selectedStartTime
     ? selectedStartTime
     : startTimes.length > 0 && startTimes[0] && startTimes[0].timestamp
-    ? startTimes[0].timestamp
-    : null;
+      ? startTimes[0].timestamp
+      : null;
 
   const startTimeAsDate = startTime ? timestampToDate(startTime) : null;
 
@@ -141,8 +141,8 @@ const getAllTimeValues = (
   const endDate = selectedEndDate
     ? selectedEndDate
     : startTimeAsDate
-    ? new Date(findNextBoundary(timeZone, startTimeAsDate).getTime() - 1)
-    : null;
+      ? new Date(findNextBoundary(timeZone, startTimeAsDate).getTime() - 1)
+      : null;
 
   const selectedTimeSlot = timeSlots.find(t =>
     isInRange(startTimeAsDate, t.attributes.start, t.attributes.end)
@@ -161,8 +161,8 @@ const getMonthlyTimeSlots = (monthlyTimeSlots, date, timeZone) => {
   return !monthlyTimeSlots || Object.keys(monthlyTimeSlots).length === 0
     ? []
     : monthlyTimeSlots[monthId] && monthlyTimeSlots[monthId].timeSlots
-    ? monthlyTimeSlots[monthId].timeSlots
-    : [];
+      ? monthlyTimeSlots[monthId].timeSlots
+      : [];
 };
 
 const Next = props => {
@@ -411,14 +411,14 @@ class FieldDateAndTimeInput extends Component {
 
     const isDayBlocked = timeSlotsOnSelectedMonth
       ? day =>
-          !timeSlotsOnSelectedMonth.find(timeSlot =>
-            isDayMomentInsideRange(
-              day,
-              timeSlot.attributes.start,
-              timeSlot.attributes.end,
-              timeZone
-            )
+        !timeSlotsOnSelectedMonth.find(timeSlot =>
+          isDayMomentInsideRange(
+            day,
+            timeSlot.attributes.start,
+            timeSlot.attributes.end,
+            timeZone
           )
+        )
       : () => false;
 
     const placeholderTime = localizeAndFormatTime(
@@ -464,6 +464,27 @@ class FieldDateAndTimeInput extends Component {
               validate={bookingDateRequired('Required')}
             />
           </div>
+          <div className={css.field}>
+            <FieldSelect
+              name="bookingStartTime"
+              id={formId ? `${formId}.bookingStartTime` : 'bookingStartTime'}
+              className={bookingStartDate ? css.fieldSelect : css.fieldSelectDisabled}
+              selectClassName={bookingStartDate ? css.select : css.selectDisabled}
+              label={startTimeLabel}
+              disabled={startTimeDisabled}
+              onChange={this.onBookingStartTimeChange}
+            >
+              {bookingStartDate ? (
+                availableStartTimes.map(p => (
+                  <option key={p.timeOfDay} value={p.timestamp}>
+                    {p.timeOfDay}
+                  </option>
+                ))
+              ) : (
+                  <option>{placeholderTime}</option>
+                )}
+            </FieldSelect>
+          </div>
         </div>
         <div className={css.formRow}>
           <div className={classNames(css.field, css.endDateHidden)}>
@@ -496,31 +517,6 @@ class FieldDateAndTimeInput extends Component {
               showLabelAsDisabled={endDateDisabled}
             />
           </div>
-
-          <div className={css.field}>
-            <FieldSelect
-              name="bookingStartTime"
-              id={formId ? `${formId}.bookingStartTime` : 'bookingStartTime'}
-              className={bookingStartDate ? css.fieldSelect : css.fieldSelectDisabled}
-              selectClassName={bookingStartDate ? css.select : css.selectDisabled}
-              label={startTimeLabel}
-              disabled={startTimeDisabled}
-              onChange={this.onBookingStartTimeChange}
-            >
-              {bookingStartDate ? (
-                availableStartTimes.map(p => (
-                  <option key={p.timeOfDay} value={p.timestamp}>
-                    {p.timeOfDay}
-                  </option>
-                ))
-              ) : (
-                <option>{placeholderTime}</option>
-              )}
-            </FieldSelect>
-          </div>
-
-          <div className={bookingStartDate ? css.lineBetween : css.lineBetweenDisabled}>-</div>
-
           <div className={css.field}>
             <FieldSelect
               name="bookingEndTime"
@@ -537,8 +533,8 @@ class FieldDateAndTimeInput extends Component {
                   </option>
                 ))
               ) : (
-                <option>{placeholderTime}</option>
-              )}
+                  <option>{placeholderTime}</option>
+                )}
             </FieldSelect>
           </div>
         </div>
