@@ -245,12 +245,12 @@ class FieldDateAndTimeInput extends Component {
   }
 
   onBookingStartDateChange = value => {
-    const { monthlyTimeSlots, timeZone, intl, form } = this.props;
+    const { monthlyTimeSlots, timeZone, intl, form, formId } = this.props;
     if (!value || !value.date) {
       form.batch(() => {
-        form.change('bookingStartTime', null);
-        form.change('bookingEndDate', { date: null });
-        form.change('bookingEndTime', null);
+        form.change(formId ? `${formId}.bookingStartTime` : 'bookingStartTime', null);
+        form.change(formId ? `${formId}.bookingEndDate` : 'bookingEndDate', { date: null });
+        form.change(formId ? `${formId}.bookingEndTime` : 'bookingEndTime', null);
       });
       // Reset the currentMonth too if bookingStartDate is cleared
       this.setState({ currentMonth: getMonthStartInTimeZone(TODAY, timeZone) });
@@ -272,14 +272,14 @@ class FieldDateAndTimeInput extends Component {
     );
 
     form.batch(() => {
-      form.change('bookingStartTime', startTime);
-      form.change('bookingEndDate', { date: endDate });
-      form.change('bookingEndTime', endTime);
+      form.change(formId ? `${formId}.bookingStartTime` : 'bookingStartTime', startTime);
+      form.change(formId ? `${formId}.bookingEndDate` : 'bookingEndDate', { date: endDate });
+      form.change(formId ? `${formId}.bookingEndTime` : 'bookingEndTime', endTime);
     });
   };
 
   onBookingStartTimeChange = value => {
-    const { monthlyTimeSlots, timeZone, intl, form, values } = this.props;
+    const { monthlyTimeSlots, timeZone, intl, form, values, formId } = this.props;
     const timeSlots = getMonthlyTimeSlots(monthlyTimeSlots, this.state.currentMonth, timeZone);
     const startDate = values.bookingStartDate.date;
     const timeSlotsOnSelectedDate = getTimeSlots(timeSlots, startDate, timeZone);
@@ -293,15 +293,15 @@ class FieldDateAndTimeInput extends Component {
     );
 
     form.batch(() => {
-      form.change('bookingEndDate', { date: endDate });
-      form.change('bookingEndTime', endTime);
+      form.change(formId ? `${formId}.bookingEndDate` : 'bookingEndDate', { date: endDate });
+      form.change(formId ? `${formId}.bookingEndTime` : 'bookingEndTime', endTime);
     });
   };
 
   onBookingEndDateChange = value => {
-    const { monthlyTimeSlots, timeZone, intl, form, values } = this.props;
+    const { monthlyTimeSlots, timeZone, intl, form, values, formId } = this.props;
     if (!value || !value.date) {
-      form.change('bookingEndTime', null);
+      form.change(formId ? `${formId}.bookingEndTime` : 'bookingEndTime', null);
       return;
     }
 
@@ -443,7 +443,7 @@ class FieldDateAndTimeInput extends Component {
           <div className={classNames(css.field, css.startDate)}>
             <FieldDateInput
               className={css.fieldDateInput}
-              name="bookingStartDate"
+              name={formId ? `${formId}.bookingStartDate` : 'bookingStartDate'}
               id={formId ? `${formId}.bookingStartDate` : 'bookingStartDate'}
               label={startDateInputProps.label}
               placeholderText={startDateInputProps.placeholderText}
@@ -466,7 +466,7 @@ class FieldDateAndTimeInput extends Component {
           </div>
           <div className={css.field}>
             <FieldSelect
-              name="bookingStartTime"
+              name={formId ? `${formId}.bookingStartTime` : 'bookingStartTime'}
               id={formId ? `${formId}.bookingStartTime` : 'bookingStartTime'}
               className={bookingStartDate ? css.fieldSelect : css.fieldSelectDisabled}
               selectClassName={bookingStartDate ? css.select : css.selectDisabled}
@@ -490,7 +490,7 @@ class FieldDateAndTimeInput extends Component {
           <div className={classNames(css.field, css.endDateHidden)}>
             <FieldDateInput
               {...endDateInputProps}
-              name="bookingEndDate"
+              name={formId ? `${formId}.bookingEndDate` : 'bookingEndDate'}
               id={formId ? `${formId}.bookingEndDate` : 'bookingEndDate'}
               className={css.fieldDateInput}
               label={endDateInputProps.label}
@@ -519,7 +519,7 @@ class FieldDateAndTimeInput extends Component {
           </div>
           <div className={css.field}>
             <FieldSelect
-              name="bookingEndTime"
+              name={formId ? `${formId}.bookingEndTime` : 'bookingEndTime'}
               id={formId ? `${formId}.bookingEndTime` : 'bookingEndTime'}
               className={bookingStartDate ? css.fieldSelect : css.fieldSelectDisabled}
               selectClassName={bookingStartDate ? css.select : css.selectDisabled}

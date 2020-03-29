@@ -206,7 +206,7 @@ export const validHKID = message => value => {
 
   // Calculate the checksum for numeric part
 
-  for (let i = 0, j = 7; i < numPart.length; i++, j--) {
+  for (let i = 0, j = 7; i < numPart.length; i++ , j--) {
     checkSum += j * numPart.charAt(i);
   }
 
@@ -225,3 +225,8 @@ export const validSGID = message => value => {
 
 export const composeValidators = (...validators) => value =>
   validators.reduce((error, validator) => error || validator(value), VALID);
+
+export const bookingDaysMustNotDuplicate = message => value => {
+  console.log(value)
+  return message;
+};
