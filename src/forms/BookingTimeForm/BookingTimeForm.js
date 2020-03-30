@@ -75,39 +75,48 @@ export class BookingTimeFormComponent extends Component {
             timeZone,
           } = fieldRenderProps;
 
-          const startTime = values && values.bookingStartTime ? values.bookingStartTime : null;
-          const endTime = values && values.bookingEndTime ? values.bookingEndTime : null;
+          const bookingTime = values && values.bookingTime ? values.bookingTime : null;
+
+          // This is the place to collect breakdown estimation data. See the
+          // EstimatedBreakdownMaybe component to change the calculations
+          // for customized payment processes.
+          const bookingData = bookingTime
+            ? bookingTime.map(values => {
+              const startTime = values && values.bookingStartTime ? values.bookingStartTime : null;
+              const endTime = values && values.bookingEndTime ? values.bookingEndTime : null;
+
+              const startDate = startTime ? timestampToDate(startTime) : null;
+              const endDate = endTime ? timestampToDate(endTime) : null;
+
+              return startDate && endDate
+                ? {
+                  unitType,
+                  unitPrice,
+                  startDate,
+                  endDate,
+
+                  // Calculate the quantity as hours between the booking start and booking end
+                  quantity: calculateQuantityFromHours(startDate, endDate),
+                  timeZone,
+                }
+                : null
+            })
+            : null
 
           const bookingStartLabel = intl.formatMessage({
             id: 'BookingTimeForm.bookingStartTitle',
           });
           const bookingEndLabel = intl.formatMessage({ id: 'BookingTimeForm.bookingEndTitle' });
-
-          const startDate = startTime ? timestampToDate(startTime) : null;
-          const endDate = endTime ? timestampToDate(endTime) : null;
-
-          // This is the place to collect breakdown estimation data. See the
-          // EstimatedBreakdownMaybe component to change the calculations
-          // for customized payment processes.
-          const bookingData =
-            startDate && endDate
-              ? {
-                unitType,
-                unitPrice,
-                startDate,
-                endDate,
-
-                // Calculate the quantity as hours between the booking start and booking end
-                quantity: calculateQuantityFromHours(startDate, endDate),
-                timeZone,
-              }
-              : null;
           const bookingInfo = bookingData ? (
             <div className={css.priceBreakdownContainer}>
               <h3 className={css.priceBreakdownTitle}>
                 <FormattedMessage id="BookingTimeForm.priceBreakdownTitle" />
               </h3>
-              <EstimatedBreakdownMaybe bookingData={bookingData} />
+              {bookingData.map(data => {
+                return data
+                  ? (<EstimatedBreakdownMaybe bookingData={data} />)
+                  : null;
+              })}
             </div>
           ) : null;
 
@@ -283,7 +292,7 @@ export class BookingTimeFormComponent extends Component {
                     return indexOfNotEnoughSeatSlot.map(index => {
                       return timeSlots[index].bookings.map(({ bookingStartTime, bookingEndTime }) => {
                         return (<p className={css.smallPrint}>
-                          {`${moment(bookingStartTime).format('MMM Do YYYY, h:mm a')}-${moment(bookingEndTime).format('MMM Do YYYY, h:mm a')}`}
+                          {`${moment(bookingStartTime).format('MMM Do YYYY, h:mm a')}-${moment(bookingEndTime).format('h:mm a')}`}
                         </p>);
                       });
                     });

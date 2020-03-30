@@ -33,7 +33,9 @@ export const isValidBookingDates = bookingDates => {
     bookingStart: d => d instanceof Date,
     bookingEnd: d => d instanceof Date,
   };
-  return validateProperties(bookingDates, props);
+  const validateResult = bookingDates.map(dates =>
+    validateProperties(dates, props));
+  return !validateResult.find(result => !result);
 };
 
 // Validate content of listing object received from SessionStore.
@@ -72,7 +74,7 @@ export const storeData = (bookingData, bookingDates, listing, transaction, stora
       storedAt: new Date(),
     };
 
-    const replacer = function(k, v) {
+    const replacer = function (k, v) {
       if (this[k] instanceof Date) {
         return { date: v, _serializedType: 'SerializableDate' };
       }

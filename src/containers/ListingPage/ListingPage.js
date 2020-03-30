@@ -94,25 +94,35 @@ export class ListingPageComponent extends Component {
       callSetInitialValues,
       onInitializeCardPaymentData,
     } = this.props;
+
     const listingId = new UUID(params.id);
     const listing = getListing(listingId);
 
-    const { bookingStartTime, bookingEndTime, ...restOfValues } = values;
-    const bookingStart = timestampToDate(bookingStartTime);
-    const bookingEnd = timestampToDate(bookingEndTime);
+    const { bookingTime } = values;
+    const { bookingData, bookingDates } = bookingTime.reduce((result, currentValues) => {
+      const { bookingStartTime, bookingEndTime, ...restOfValues } = currentValues;
+      const bookingStart = timestampToDate(bookingStartTime);
+      const bookingEnd = timestampToDate(bookingEndTime);
 
-    const bookingData = {
-      quantity: calculateQuantityFromHours(bookingStart, bookingEnd),
-      ...restOfValues,
-    };
+      const bookingData = {
+        quantity: calculateQuantityFromHours(bookingStart, bookingEnd),
+        ...restOfValues,
+      };
+      const bookingDate = {
+        bookingStart,
+        bookingEnd,
+      }
+      result.bookingData.push(bookingData);
+      result.bookingDates.push(bookingDate)
+      return result;
+    }, { bookingData: [], bookingDates: [] });
+
+
 
     const initialValues = {
       listing,
       bookingData,
-      bookingDates: {
-        bookingStart,
-        bookingEnd,
-      },
+      bookingDates,
       confirmPaymentError: null,
     };
 

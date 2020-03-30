@@ -48,7 +48,7 @@ import { savePaymentMethod } from '../../ducks/paymentMethods.duck';
 import {
   initiateOrder,
   setInitialValues,
-  speculateTransaction,
+  speculateTransactions,
   stripeCustomer,
   confirmPayment,
   sendMessage,
@@ -73,8 +73,8 @@ const paymentFlow = (selectedPaymentMethod, saveAfterOnetimePayment) => {
   return selectedPaymentMethod === 'defaultCard'
     ? USE_SAVED_CARD
     : saveAfterOnetimePayment
-    ? PAY_AND_SAVE_FOR_LATER_USE
-    : ONETIME_PAYMENT;
+      ? PAY_AND_SAVE_FOR_LATER_USE
+      : ONETIME_PAYMENT;
 };
 
 const initializeOrderPage = (initialValues, routes, dispatch) => {
@@ -89,8 +89,8 @@ const checkIsPaymentExpired = existingTransaction => {
   return txIsPaymentExpired(existingTransaction)
     ? true
     : txIsPaymentPending(existingTransaction)
-    ? minutesBetween(existingTransaction.attributes.lastTransitionedAt, new Date()) >= 15
-    : false;
+      ? minutesBetween(existingTransaction.attributes.lastTransitionedAt, new Date()) >= 15
+      : false;
 };
 
 export class CheckoutPageComponent extends Component {
@@ -175,25 +175,27 @@ export class CheckoutPageComponent extends Component {
       pageData.listing.id &&
       pageData.bookingData &&
       pageData.bookingDates &&
-      pageData.bookingDates.bookingStart &&
-      pageData.bookingDates.bookingEnd &&
-      pageData.bookingData.quantity &&
+      pageData.bookingData.length > 0 &&
+      pageData.bookingDates.length > 0 &&
+      pageData.bookingDates.length === pageData.bookingData.length &&
       !isBookingCreated;
 
     if (shouldFetchSpeculatedTransaction) {
       const listingId = pageData.listing.id;
-      const { bookingStart, bookingEnd } = pageData.bookingDates;
-      const { quantity } = pageData.bookingData;
-
+      const speculationData = pageData.bookingData.map((bookingData, i) => {
+        const { bookingStart, bookingEnd } = pageData.bookingDates[i];
+        const { quantity } = bookingData;
+        return {
+          listingId,
+          bookingStart,
+          bookingEnd,
+          quantity,
+        };
+      })
       // Fetch speculated transaction for showing price in booking breakdown
       // NOTE: if unit type is line-item/units, quantity needs to be added.
       // The way to pass it to checkout page is through pageData.bookingData
-      fetchSpeculatedTransaction({
-        listingId,
-        bookingStart,
-        bookingEnd,
-        quantity,
-      });
+      fetchSpeculatedTransaction(speculationData);
     }
 
     this.setState({ pageData: pageData || {}, dataLoaded: true });
@@ -282,10 +284,10 @@ export class CheckoutPageComponent extends Component {
       const paymentParams =
         selectedPaymentFlow !== USE_SAVED_CARD
           ? {
-              payment_method_data: {
-                billing_details: billingDetails,
-              },
-            }
+            payment_method_data: {
+              billing_details: billingDetails,
+            },
+          }
           : {};
 
       const params = {
@@ -365,18 +367,37 @@ export class CheckoutPageComponent extends Component {
       selectedPaymentFlow === USE_SAVED_CARD && hasDefaultPaymentMethod
         ? { paymentMethod: stripePaymentMethodId }
         : selectedPaymentFlow === PAY_AND_SAVE_FOR_LATER_USE
-        ? { setupPaymentMethodForSaving: true }
-        : {};
+          ? { setupPaymentMethodForSaving: true }
+          : {};
 
-    const orderParams = {
-      listingId: pageData.listing.id,
-      bookingStart: tx.booking.attributes.start,
-      bookingEnd: tx.booking.attributes.end,
-      quantity: pageData.bookingData ? pageData.bookingData.quantity : null,
-      ...optionalPaymentParams,
-    };
+    const orderParamsArray = Array.isArray(tx)
+      ? tx.map((tx, i) => {
+        return {
+          listingId: pageData.listing.id,
+          bookingStart: tx.booking.attributes.start,
+          bookingEnd: tx.booking.attributes.end,
+          quantity: pageData.bookingData[i] ? pageData.bookingData[i].quantity : null,
+          ...optionalPaymentParams,
+        }
+      })
+      : [{
+        listingId: pageData.listing.id,
+        bookingStart: tx.booking.attributes.start,
+        bookingEnd: tx.booking.attributes.end,
+        quantity: pageData.bookingData ? pageData.bookingData.quantity : null,
+        ...optionalPaymentParams,
+      }];
 
-    return handlePaymentIntentCreation(orderParams);
+    const createBookings = async (orderParamsArray) => {
+      const results = []
+      for (const orderParams of orderParamsArray) {
+        const result = await handlePaymentIntentCreation(orderParams);
+        results.push(result);
+      }
+      return results;
+    }
+
+    return createBookings(orderParamsArray);
   }
 
   handleSubmit(values) {
@@ -405,15 +426,15 @@ export class CheckoutPageComponent extends Component {
     const addressMaybe =
       addressLine1 && postal
         ? {
-            address: {
-              city: city,
-              country: country,
-              line1: addressLine1,
-              line2: addressLine2,
-              postal_code: postal,
-              state: state,
-            },
-          }
+          address: {
+            city: city,
+            country: country,
+            line1: addressLine1,
+            line2: addressLine2,
+            postal_code: postal,
+            state: state,
+          },
+        }
         : {};
     const billingDetails = {
       name,
@@ -435,20 +456,11 @@ export class CheckoutPageComponent extends Component {
 
     this.handlePaymentIntent(requestPaymentParams)
       .then(res => {
-        const { orderId, messageSuccess, paymentMethodSaved } = res;
         this.setState({ submitting: false });
-
         const routes = routeConfiguration();
-        const initialMessageFailedToTransaction = messageSuccess ? null : orderId;
-        const orderDetailsPath = pathByRouteName('OrderDetailsPage', routes, { id: orderId.uuid });
-        const initialValues = {
-          initialMessageFailedToTransaction,
-          savePaymentMethodFailed: !paymentMethodSaved,
-        };
-
-        initializeOrderPage(initialValues, routes, dispatch);
+        const inboxPagePath = pathByRouteName('InboxPage', routes, { tab: 'orders' });
         clearData(STORAGE_KEY);
-        history.push(orderDetailsPath);
+        history.push(inboxPagePath);
       })
       .catch(err => {
         console.error(err);
@@ -513,9 +525,12 @@ export class CheckoutPageComponent extends Component {
 
     const isLoading = !this.state.dataLoaded || speculateTransactionInProgress;
 
-    const { listing, bookingDates, transaction } = this.state.pageData;
+    const { listing, bookingDates, transaction, bookingData } = this.state.pageData;
     const existingTransaction = ensureTransaction(transaction);
-    const speculatedTransaction = ensureTransaction(speculatedTransactionMaybe, {}, null);
+    const speculatedTransaction = speculatedTransactionMaybe
+      ? speculatedTransactionMaybe.map(speculatedTransactionMaybe =>
+        ensureTransaction(speculatedTransactionMaybe, {}, null))
+      : [ensureTransaction(null, {}, null)];
     const currentListing = ensureListing(listing);
     const currentAuthor = ensureUser(currentListing.author);
 
@@ -554,8 +569,8 @@ export class CheckoutPageComponent extends Component {
     const hasListingAndAuthor = !!(currentListing.id && currentAuthor.id);
     const hasBookingDates = !!(
       bookingDates &&
-      bookingDates.bookingStart &&
-      bookingDates.bookingEnd
+      bookingDates.length > 0 &&
+      bookingDates.length === bookingData.length
     );
     const hasRequiredData = hasListingAndAuthor && hasBookingDates;
     const canShowPage = hasRequiredData && !isOwnListing;
@@ -576,22 +591,42 @@ export class CheckoutPageComponent extends Component {
     // Show breakdown only when speculated transaction and booking are loaded
     // (i.e. have an id)
     const tx = existingTransaction.booking ? existingTransaction : speculatedTransaction;
-    const txBooking = ensureBooking(tx.booking);
+    const txBooking = Array.isArray(tx)
+      ? tx.map(tx => tx.booking)
+      : ensureBooking(tx.booking);
     const timeZone = currentListing.attributes.availabilityPlan
       ? currentListing.attributes.availabilityPlan.timezone
       : 'Etc/UTC';
-    const breakdown =
-      tx.id && txBooking.id ? (
-        <BookingBreakdown
-          className={css.bookingBreakdown}
-          userRole="customer"
-          unitType={config.bookingUnitType}
-          transaction={tx}
-          booking={txBooking}
-          dateType={DATE_TYPE_DATETIME}
-          timeZone={timeZone}
-        />
-      ) : null;
+    const breakdown = (
+      <React.Fragment>
+        {Array.isArray(tx) && (
+          speculatedTransaction.map((tx, i) => {
+            return (
+              <BookingBreakdown
+                className={css.bookingBreakdown}
+                userRole="customer"
+                unitType={config.bookingUnitType}
+                transaction={tx}
+                booking={txBooking[i]}
+                dateType={DATE_TYPE_DATETIME}
+                timeZone={timeZone}
+              />
+            );
+          })
+        )}
+        {!Array.isArray(tx) && tx.id && txBooking.id && (
+          <BookingBreakdown
+            className={css.bookingBreakdown}
+            userRole="customer"
+            unitType={config.bookingUnitType}
+            transaction={tx}
+            booking={txBooking}
+            dateType={DATE_TYPE_DATETIME}
+            timeZone={timeZone}
+          />
+        )}
+      </React.Fragment>
+    );
 
     const isPaymentExpired = checkIsPaymentExpired(existingTransaction);
     const hasDefaultPaymentMethod = !!(
@@ -719,8 +754,8 @@ export class CheckoutPageComponent extends Component {
     const unitTranslationKey = isNightly
       ? 'CheckoutPage.perNight'
       : isDaily
-      ? 'CheckoutPage.perDay'
-      : 'CheckoutPage.perUnit';
+        ? 'CheckoutPage.perDay'
+        : 'CheckoutPage.perUnit';
 
     const price = currentListing.attributes.price;
     const formattedPrice = formatMoney(intl, price);
@@ -934,7 +969,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => ({
   dispatch,
-  fetchSpeculatedTransaction: params => dispatch(speculateTransaction(params)),
+  fetchSpeculatedTransaction: params => dispatch(speculateTransactions(params)),
   fetchStripeCustomer: () => dispatch(stripeCustomer()),
   onInitiateOrder: (params, transactionId) => dispatch(initiateOrder(params, transactionId)),
   onRetrievePaymentIntent: params => dispatch(retrievePaymentIntent(params)),

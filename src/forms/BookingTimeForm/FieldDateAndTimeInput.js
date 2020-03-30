@@ -464,27 +464,6 @@ class FieldDateAndTimeInput extends Component {
               validate={bookingDateRequired('Required')}
             />
           </div>
-          <div className={css.field}>
-            <FieldSelect
-              name={formId ? `${formId}.bookingStartTime` : 'bookingStartTime'}
-              id={formId ? `${formId}.bookingStartTime` : 'bookingStartTime'}
-              className={bookingStartDate ? css.fieldSelect : css.fieldSelectDisabled}
-              selectClassName={bookingStartDate ? css.select : css.selectDisabled}
-              label={startTimeLabel}
-              disabled={startTimeDisabled}
-              onChange={this.onBookingStartTimeChange}
-            >
-              {bookingStartDate ? (
-                availableStartTimes.map(p => (
-                  <option key={p.timeOfDay} value={p.timestamp}>
-                    {p.timeOfDay}
-                  </option>
-                ))
-              ) : (
-                  <option>{placeholderTime}</option>
-                )}
-            </FieldSelect>
-          </div>
         </div>
         <div className={css.formRow}>
           <div className={classNames(css.field, css.endDateHidden)}>
@@ -517,6 +496,28 @@ class FieldDateAndTimeInput extends Component {
               showLabelAsDisabled={endDateDisabled}
             />
           </div>
+          <div className={css.field}>
+            <FieldSelect
+              name={formId ? `${formId}.bookingStartTime` : 'bookingStartTime'}
+              id={formId ? `${formId}.bookingStartTime` : 'bookingStartTime'}
+              className={bookingStartDate ? css.fieldSelect : css.fieldSelectDisabled}
+              selectClassName={bookingStartDate ? css.select : css.selectDisabled}
+              label={startTimeLabel}
+              disabled={startTimeDisabled}
+              onChange={this.onBookingStartTimeChange}
+            >
+              {bookingStartDate ? (
+                availableStartTimes.map(p => (
+                  <option key={p.timeOfDay} value={p.timestamp}>
+                    {p.timeOfDay}
+                  </option>
+                ))
+              ) : (
+                  <option>{placeholderTime}</option>
+                )}
+            </FieldSelect>
+          </div>
+          <div className={bookingStartDate ? css.lineBetween : css.lineBetweenDisabled}>-</div>
           <div className={css.field}>
             <FieldSelect
               name={formId ? `${formId}.bookingEndTime` : 'bookingEndTime'}
