@@ -1,0 +1,14 @@
+@import '../../marketplace.css';
+
+.root {
+  display: flex;
+  flex-direction: column;
+}
+
+.addMore {
+  @apply --marketplaceH4FontStyles;
+  color: var(--marketplaceColorDark);
+  &:hover {
+    color: var(--marketplaceColorLight);
+  }
+}
