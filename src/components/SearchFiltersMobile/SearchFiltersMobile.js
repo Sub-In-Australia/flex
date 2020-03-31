@@ -7,6 +7,7 @@ import omit from 'lodash/omit';
 
 import routeConfiguration from '../../routeConfiguration';
 import { createResourceLocatorString } from '../../util/routes';
+import { parseDateFromISO8601, stringifyDateToISO8601 } from '../../util/dates';
 import {
   ModalInMobile,
   Button,
@@ -14,10 +15,13 @@ import {
   PriceFilter,
   SelectSingleFilter,
   SelectMultipleFilter,
+  BookingDateRangeFilter,
 } from '../../components';
 import { propTypes } from '../../util/types';
 import css from './SearchFiltersMobile.css';
 
+// Dropdown container can have a positional offset (in pixels)
+const FILTER_DROPDOWN_OFFSET = -14;
 const RADIX = 10;
 
 class SearchFiltersMobileComponent extends Component {
@@ -33,9 +37,11 @@ class SearchFiltersMobileComponent extends Component {
     this.handleSelectMultiple = this.handleSelectMultiple.bind(this);
     this.handlePrice = this.handlePrice.bind(this);
     this.handleKeyword = this.handleKeyword.bind(this);
+    this.handleDateRange = this.handleDateRange.bind(this)
     this.initialValue = this.initialValue.bind(this);
     this.initialValues = this.initialValues.bind(this);
     this.initialPriceRangeValue = this.initialPriceRangeValue.bind(this);
+    this.initialDateRangeValue = this.initialDateRangeValue.bind(this);
   }
 
   // Open filters modal, set the initial parameters to current ones
@@ -101,6 +107,21 @@ class SearchFiltersMobileComponent extends Component {
     history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, queryParams));
   }
 
+  handleDateRange(urlParam, dateRange) {
+    const { urlQueryParams, history } = this.props;
+    const hasDates = dateRange && dateRange.dates;
+    const { startDate, endDate } = hasDates ? dateRange.dates : {};
+
+    const start = startDate ? stringifyDateToISO8601(startDate) : null;
+    const end = endDate ? stringifyDateToISO8601(endDate) : null;
+
+    const queryParams =
+      start != null && end != null
+        ? { ...urlQueryParams, [urlParam]: `${start},${end}` }
+        : omit(urlQueryParams, urlParam);
+    history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, queryParams));
+  }
+
   handleKeyword(urlParam, keywords) {
     const { urlQueryParams, history } = this.props;
     const queryParams = urlParam
@@ -141,10 +162,25 @@ class SearchFiltersMobileComponent extends Component {
 
     return !!price && valuesFromParams.length === 2
       ? {
-          minPrice: valuesFromParams[0],
-          maxPrice: valuesFromParams[1],
-        }
+        minPrice: valuesFromParams[0],
+        maxPrice: valuesFromParams[1],
+      }
       : null;
+  }
+
+  initialDateRangeValue(paramName) {
+    const urlQueryParams = this.props.urlQueryParams;
+    const dates = urlQueryParams[paramName];
+    const rawValuesFromParams = !!dates ? dates.split(',') : [];
+    const valuesFromParams = rawValuesFromParams.map(v => parseDateFromISO8601(v));
+    const initialValues =
+      !!dates && valuesFromParams.length === 2
+        ? {
+          dates: { startDate: valuesFromParams[0], endDate: valuesFromParams[1] },
+        }
+        : { dates: null };
+
+    return initialValues;
   }
 
   render() {
@@ -158,9 +194,7 @@ class SearchFiltersMobileComponent extends Component {
       onMapIconClick,
       onManageDisableScrolling,
       selectedFiltersCount,
-      certificateFilter,
-      yogaStylesFilter,
-      priceFilter,
+      dateRangeFilter,
       keywordFilter,
       intl,
     } = this.props;
@@ -183,54 +217,19 @@ class SearchFiltersMobileComponent extends Component {
     const filtersButtonClasses =
       selectedFiltersCount > 0 ? css.filtersButtonSelected : css.filtersButton;
 
-    const certificateLabel = intl.formatMessage({
-      id: 'SearchFiltersMobile.certificateLabel',
-    });
-    const initialcertificate = certificateFilter
-      ? this.initialValue(certificateFilter.paramName)
-      : null;
+    const initialDateRange = this.initialDateRangeValue(dateRangeFilter.paramName);
 
-    const certificateFilterElement = certificateFilter ? (
-      <SelectSingleFilter
-        urlParam={certificateFilter.paramName}
-        label={certificateLabel}
-        onSelect={this.handleSelectSingle}
-        liveEdit
-        options={certificateFilter.options}
-        initialValue={initialcertificate}
-        intl={intl}
-      />
-    ) : null;
-
-    const yogaStylesLabel = intl.formatMessage({ id: 'SearchFiltersMobile.yogaStylesLabel' });
-
-    const initialyogaStyles = this.initialValues(yogaStylesFilter.paramName);
-
-    const yogaStylesFilterElement = yogaStylesFilter ? (
-      <SelectMultipleFilter
-        id="SearchFiltersMobile.yogaStylesFilter"
-        name="yogaStyles"
-        urlParam={yogaStylesFilter.paramName}
-        label={yogaStylesLabel}
-        onSubmit={this.handleSelectMultiple}
-        liveEdit
-        options={yogaStylesFilter.options}
-        initialValues={initialyogaStyles}
-      />
-    ) : null;
-
-    const initialPriceRange = this.initialPriceRangeValue(priceFilter.paramName);
-
-    const priceFilterElement = priceFilter ? (
-      <PriceFilter
-        id="SearchFiltersMobile.priceFilter"
-        urlParam={priceFilter.paramName}
-        onSubmit={this.handlePrice}
-        liveEdit
-        {...priceFilter.config}
-        initialValues={initialPriceRange}
-      />
-    ) : null;
+    const dateRangeFilterElement =
+      dateRangeFilter && dateRangeFilter.config.active ? (
+        <BookingDateRangeFilter
+          id="SearchFiltersMobile.dateRangeFilter"
+          urlParam={dateRangeFilter.paramName}
+          onSubmit={this.handleDateRange}
+          liveEdit
+          showAsPopup={false}
+          initialValues={initialDateRange}
+        />
+      ) : null;
 
     const initialKeyword = this.initialValue(keywordFilter.paramName);
     const keywordLabel = intl.formatMessage({
@@ -282,10 +281,8 @@ class SearchFiltersMobileComponent extends Component {
           </div>
           {this.state.isFiltersOpenOnMobile ? (
             <div className={css.filtersWrapper}>
+              {dateRangeFilterElement}
               {keywordFilterElement}
-              {yogaStylesFilterElement}
-              {certificateFilterElement}
-              {priceFilterElement}
             </div>
           ) : null}
 
@@ -307,9 +304,7 @@ SearchFiltersMobileComponent.defaultProps = {
   searchingInProgress: false,
   selectedFiltersCount: 0,
   filterParamNames: [],
-  certificateFilter: null,
-  yogaStylesFilter: null,
-  priceFilter: null,
+  dateRangeFilter: null,
 };
 
 SearchFiltersMobileComponent.propTypes = {
@@ -326,9 +321,7 @@ SearchFiltersMobileComponent.propTypes = {
   onCloseModal: func.isRequired,
   selectedFiltersCount: number,
   filterParamNames: array,
-  certificateFilter: propTypes.filterConfig,
-  yogaStylesFilter: propTypes.filterConfig,
-  priceFilter: propTypes.filterConfig,
+  dateRangeFilter: propTypes.filterConfig,
 
   // from injectIntl
   intl: intlShape.isRequired,

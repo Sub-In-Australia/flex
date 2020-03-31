@@ -2,6 +2,7 @@ import unionWith from 'lodash/unionWith';
 import { storableError } from '../../util/errors';
 import { addMarketplaceEntities } from '../../ducks/marketplaceData.duck';
 import { convertUnitToSubUnit, unitDivisor } from '../../util/currency';
+import { formatDateStringToUTC, getExclusiveEndDate } from '../../util/dates';
 import config from '../../config';
 
 // ================ Action types ================ //
@@ -131,21 +132,57 @@ export const searchListings = searchParams => (dispatch, getState, sdk) => {
       : {};
   };
 
+  const datesSearchParams = datesParam => {
+    const values = datesParam ? datesParam.split(',') : [];
+    const hasValues = datesParam && values.length === 2;
+    const startDate = hasValues ? values[0] : null;
+    const isNightlyBooking = config.bookingUnitType === 'line-item/night';
+    const endDate =
+      hasValues && isNightlyBooking ? values[1] : hasValues ? getExclusiveEndDate(values[1]) : null;
+
+    return hasValues
+      ? {
+          start: formatDateStringToUTC(startDate),
+          end: formatDateStringToUTC(endDate),
+          // Availability can be full or partial. Default value is full.
+          availability: 'time-partial',
+        }
+      : {};
+  };
+
   const { perPage, price, dates, ...rest } = searchParams;
   const priceMaybe = priceSearchParams(price);
+  const datesMaybe = datesSearchParams(dates);
 
   const params = {
     ...rest,
     ...priceMaybe,
+    ...datesMaybe,
     per_page: perPage,
   };
 
   return sdk.listings
     .query(params)
     .then(response => {
-      dispatch(addMarketplaceEntities(response));
-      dispatch(searchListingsSuccess(response));
-      return response;
+      const isUnsupportedPagination = response && response.data && response.data.meta && response.data.meta.paginationUnsupported;
+
+      //This hack will be replaced soon in the future when Flex update pagination for Availibility = time-partial.
+      //Remember to remove this and bring it to default. Love you
+      const newRes = {
+        ...response,
+        data: {
+          ...response.data,
+          meta: isUnsupportedPagination ? {
+            ...response.data.meta,
+            totalItems: response.data.data.length,
+            totalPages: 1,
+          } : response.data.meta
+        }
+      }
+
+      dispatch(addMarketplaceEntities(newRes));
+      dispatch(searchListingsSuccess(newRes));
+      return newRes;
     })
     .catch(e => {
       dispatch(searchListingsError(storableError(e)));
