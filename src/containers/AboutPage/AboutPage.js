@@ -12,7 +12,7 @@ import {
 } from '../../components';
 
 import css from './AboutPage.css';
-import image from './about-us-1056.jpg';
+import image from '../../assets/background-1440.jpg';
 
 const AboutPage = () => {
   const { siteTwitterHandle, siteFacebookPage } = config;
@@ -35,51 +35,29 @@ const AboutPage = () => {
         </LayoutWrapperTopbar>
 
         <LayoutWrapperMain className={css.staticPageWrapper}>
-          <h1 className={css.pageTitle}>Find new depths in your yoga practice</h1>
+          <h1 className={css.pageTitle}>A community built & operated service for Australia</h1>
           <img className={css.coverImage} src={image} alt="My first ice cream." />
 
           <div className={css.contentWrapper}>
             <div className={css.contentSide}>
-              <p>Yoga was listed by UNESCO as an intangible cultural heritage.</p>
+              <p>Supporting healthcare professionals with teachers and childcare support through Covid-19</p>
             </div>
 
             <div className={css.contentMain}>
               <h2>
-                Each yoga practitioner is an individual, and each one of us needs different care.
-                Working together with an experienced yoga teacher offers the possibility to rise
-                our practise to a whole new level.
+                Sub_In Australia is a free community connection service. Our site allows healthcare professionals fighting COVID-19 to find qualified teachers & child care workers to safely look after their children when schools close.
               </h2>
 
               <p>
-                Whether it is the alignment of asanas or being able to set the focus of the class,
-                we all have our own struggles and goals. Some of these cannot be addressed in a
-                regular class of twenty yogis. Working together with the experienced yoga teachers
-                from Yogatime, you can together create just the right class for you.
+                This will allow +30% of nurses, doctors and others on the front line to continue to do their jobs in service & sacrifice to the greater community and make it less likely that the system will become overwhelmed, leading to increased infection and mortality. Sub_In also provides employment or altruistic service opportunities to people with verified childcare experience and qualifications.
               </p>
 
-              <h3 className={css.subtitle}>Are you a yoga teacher?</h3>
-
               <p>
-                Yogatime offers you a platform through which you can reach thousands of yoga
-                practitioners. Offering private yoga classes through Yogatime offers you a
-                possibility to grow your customer base and earn some extra income on top of your
-                regular classes.
+                It's free and only takes a few minutes to sign up as someone needing childcare or someone qualified wanting to do it!
               </p>
 
-              <h3 id="contact" className={css.subtitle}>
-                Create your own marketplace like Yogatime
-              </h3>
               <p>
-                Yogatime is brought to you by{' '}
-                <ExternalLink href="http://sharetribe.com">Sharetribe</ExternalLink>. Sharetribe
-                offers anyone a possibility to create a marketplace without restricting your own
-                creativity. Do not hesitate to reach out and learn how to best turn your
-                marketplace idea to reality.
-              </p>
-              <p>
-                You can also checkout our{' '}
-                <ExternalLink href={siteFacebookPage}>Facebook</ExternalLink> and{' '}
-                <ExternalLink href={siteTwitterPage}>Twitter</ExternalLink>.
+                Want to volunteer? We have TONS of jobs to do at Sub_in Australia. You can send us a message <a href="https://sub-in-australia.sharetribe.com/user_feedbacks/new" title="contact">here</a> or share the website <a href="https://sub-in-australia.sharetribe.com/" title="Sub in Australia">https: // sub-in-australia.sharetribe.com/</a> via social media or on your blog/website and help Google recognise us. 
               </p>
             </div>
           </div>
