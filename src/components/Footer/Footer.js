@@ -66,8 +66,8 @@ const Footer = props => {
           <div className={css.links}>
             <div className={css.organization} id="organization">
               <NamedLink name="LandingPage" className={css.logoLink}>
-                <span className={css.logo}>
-                  <Logo format="desktop" />
+                <span>
+                  <Logo format="desktop" className={css.logo}/>
                 </span>
               </NamedLink>
               <div className={css.organizationInfo}>

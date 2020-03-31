@@ -79,6 +79,8 @@
 
   @media (--viewportMedium) {
     max-width: var(--SectionHero_desktopTitleMaxWidth);
+    font-size: 40px;
+    line-height: 50px;
   }
 }
 
