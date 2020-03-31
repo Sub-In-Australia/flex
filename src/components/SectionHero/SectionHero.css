@@ -73,6 +73,8 @@
 .heroMainTitle {
   @apply --marketplaceHeroTitleFontStyles;
   color: var(--matterColorLight);
+  font-size: 28px;
+  line-height: 38px;
 
   @apply --SectionHero_animation;
   animation-delay: 0.5s;
