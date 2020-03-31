@@ -81,7 +81,7 @@
 }
 
 .modalHeading {
-  @apply --marketplaceH1FontStyles;
+  @apply --marketplaceH2FontStyles;
   margin-top: 0;
 }
 

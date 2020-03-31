@@ -53,10 +53,8 @@ export class SearchPageComponent extends Component {
 
   filters() {
     const {
-      certificateConfig,
-      yogaStylesConfig,
-      priceFilterConfig,
       keywordFilterConfig,
+      dateRangeFilterConfig,
     } = this.props;
 
     // Note: "certificate" and "yogaStyles" filters are not actually filtering anything by default.
@@ -65,21 +63,13 @@ export class SearchPageComponent extends Component {
     // https://www.sharetribe.com/docs/references/extended-data/#data-schema
 
     return {
-      certificateFilter: {
-        paramName: 'pub_certificate',
-        options: certificateConfig.filter(c => !c.hideFromFilters),
-      },
-      yogaStylesFilter: {
-        paramName: 'pub_yogaStyles',
-        options: yogaStylesConfig,
-      },
-      priceFilter: {
-        paramName: 'price',
-        config: priceFilterConfig,
-      },
       keywordFilter: {
         paramName: 'keywords',
         config: keywordFilterConfig,
+      },
+      dateRangeFilter: {
+        paramName: 'dates',
+        config: dateRangeFilterConfig,
       },
     };
   }
@@ -221,10 +211,8 @@ export class SearchPageComponent extends Component {
             searchParamsForPagination={parse(location.search)}
             showAsModalMaxWidth={MODAL_BREAKPOINT}
             primaryFilters={{
-              yogaStylesFilter: filters.yogaStylesFilter,
-              certificateFilter: filters.certificateFilter,
-              priceFilter: filters.priceFilter,
               keywordFilter: filters.keywordFilter,
+              dateRangeFilter: filters.dateRangeFilter
             }}
           />
           <ModalInMobile
@@ -268,10 +256,8 @@ SearchPageComponent.defaultProps = {
   searchListingsError: null,
   searchParams: {},
   tab: 'listings',
-  certificateConfig: config.custom.certificate,
-  yogaStylesConfig: config.custom.yogaStyles,
-  priceFilterConfig: config.custom.priceFilterConfig,
   keywordFilterConfig: config.custom.keywordFilterConfig,
+  dateRangeFilterConfig: config.custom.dateRangeFilterConfig,
   activeListingId: null,
 };
 
@@ -287,13 +273,7 @@ SearchPageComponent.propTypes = {
   searchListingsError: propTypes.error,
   searchParams: object,
   tab: oneOf(['filters', 'listings', 'map']).isRequired,
-  certificateConfig: array,
-  yogaStylesConfig: array,
-  priceFilterConfig: shape({
-    min: number.isRequired,
-    max: number.isRequired,
-    step: number.isRequired,
-  }),
+  dateRangeFilterConfig: shape({ active: bool.isRequired }),
 
   // from withRouter
   history: shape({

@@ -11,9 +11,11 @@ import {
   SelectMultipleFilter,
   PriceFilter,
   KeywordFilter,
+  BookingDateRangeFilter
 } from '../../components';
 import routeConfiguration from '../../routeConfiguration';
 import { createResourceLocatorString } from '../../util/routes';
+import { parseDateFromISO8601, stringifyDateToISO8601 } from '../../util/dates';
 import { propTypes } from '../../util/types';
 import css from './SearchFilters.css';
 
@@ -43,6 +45,20 @@ const initialPriceRangeValue = (queryParams, paramName) => {
     : null;
 };
 
+const initialDateRangeValue = (queryParams, paramName) => {
+  const dates = queryParams[paramName];
+  const rawValuesFromParams = !!dates ? dates.split(',') : [];
+  const valuesFromParams = rawValuesFromParams.map(v => parseDateFromISO8601(v));
+  const initialValues =
+    !!dates && valuesFromParams.length === 2
+      ? {
+        dates: { startDate: valuesFromParams[0], endDate: valuesFromParams[1] },
+      }
+      : { dates: null };
+
+  return initialValues;
+};
+
 const SearchFiltersComponent = props => {
   const {
     rootClassName,
@@ -51,9 +67,7 @@ const SearchFiltersComponent = props => {
     listingsAreLoaded,
     resultsCount,
     searchInProgress,
-    certificateFilter,
-    yogaStylesFilter,
-    priceFilter,
+    dateRangeFilter,
     keywordFilter,
     isSearchFiltersPanelOpen,
     toggleSearchFiltersPanel,
@@ -65,28 +79,12 @@ const SearchFiltersComponent = props => {
   const hasNoResult = listingsAreLoaded && resultsCount === 0;
   const classes = classNames(rootClassName || css.root, { [css.longInfo]: hasNoResult }, className);
 
-  const certificateLabel = intl.formatMessage({
-    id: 'SearchFilters.certificateLabel',
-  });
-
-  const yogaStylesLabel = intl.formatMessage({
-    id: 'SearchFilters.yogaStylesLabel',
-  });
-
   const keywordLabel = intl.formatMessage({
     id: 'SearchFilters.keywordLabel',
   });
 
-  const initialyogaStyles = yogaStylesFilter
-    ? initialValues(urlQueryParams, yogaStylesFilter.paramName)
-    : null;
-
-  const initialcertificate = certificateFilter
-    ? initialValue(urlQueryParams, certificateFilter.paramName)
-    : null;
-
-  const initialPriceRange = priceFilter
-    ? initialPriceRangeValue(urlQueryParams, priceFilter.paramName)
+  const initialDateRange = dateRangeFilter
+    ? initialDateRangeValue(urlQueryParams, dateRangeFilter.paramName)
     : null;
 
   const initialKeyword = keywordFilter
@@ -122,6 +120,20 @@ const SearchFiltersComponent = props => {
     history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, queryParams));
   };
 
+  const handleDateRange = (urlParam, dateRange) => {
+    const hasDates = dateRange && dateRange.dates;
+    const { startDate, endDate } = hasDates ? dateRange.dates : {};
+
+    const start = startDate ? stringifyDateToISO8601(startDate) : null;
+    const end = endDate ? stringifyDateToISO8601(endDate) : null;
+
+    const queryParams =
+      start != null && end != null
+        ? { ...urlQueryParams, [urlParam]: `${start},${end}` }
+        : omit(urlQueryParams, urlParam);
+    history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, queryParams));
+  };
+
   const handleKeyword = (urlParam, values) => {
     const queryParams = values
       ? { ...urlQueryParams, [urlParam]: values }
@@ -130,43 +142,17 @@ const SearchFiltersComponent = props => {
     history.push(createResourceLocatorString('SearchPage', routeConfiguration(), {}, queryParams));
   };
 
-  const certificateFilterElement = certificateFilter ? (
-    <SelectSingleFilter
-      urlParam={certificateFilter.paramName}
-      label={certificateLabel}
-      onSelect={handleSelectOption}
-      showAsPopup
-      options={certificateFilter.options}
-      initialValue={initialcertificate}
-      contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
-    />
-  ) : null;
-
-  const yogaStylesFilterElement = yogaStylesFilter ? (
-    <SelectMultipleFilter
-      id={'SearchFilters.yogaStylesFilter'}
-      name="yogaStyles"
-      urlParam={yogaStylesFilter.paramName}
-      label={yogaStylesLabel}
-      onSubmit={handleSelectOptions}
-      showAsPopup
-      options={yogaStylesFilter.options}
-      initialValues={initialyogaStyles}
-      contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
-    />
-  ) : null;
-
-  const priceFilterElement = priceFilter ? (
-    <PriceFilter
-      id="SearchFilters.priceFilter"
-      urlParam={priceFilter.paramName}
-      onSubmit={handlePrice}
-      showAsPopup
-      {...priceFilter.config}
-      initialValues={initialPriceRange}
-      contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
-    />
-  ) : null;
+  const dateRangeFilterElement =
+    dateRangeFilter && dateRangeFilter.config.active ? (
+      <BookingDateRangeFilter
+        id="SearchFilters.dateRangeFilter"
+        urlParam={dateRangeFilter.paramName}
+        onSubmit={handleDateRange}
+        showAsPopup
+        contentPlacementOffset={FILTER_DROPDOWN_OFFSET}
+        initialValues={initialDateRange}
+      />
+    ) : null;
 
   const keywordFilterElement =
     keywordFilter && keywordFilter.config.active ? (
@@ -202,9 +188,7 @@ const SearchFiltersComponent = props => {
   return (
     <div className={classes}>
       <div className={css.filters}>
-        {yogaStylesFilterElement}
-        {certificateFilterElement}
-        {priceFilterElement}
+        {dateRangeFilterElement}
         {keywordFilterElement}
         {toggleSearchFiltersPanelButton}
       </div>
@@ -237,9 +221,7 @@ SearchFiltersComponent.defaultProps = {
   className: null,
   resultsCount: null,
   searchingInProgress: false,
-  certificateFilter: null,
-  yogaStylesFilter: null,
-  priceFilter: null,
+  dateRangeFilter: null,
   isSearchFiltersPanelOpen: false,
   toggleSearchFiltersPanel: null,
   searchFiltersPanelSelectedCount: 0,
@@ -253,9 +235,7 @@ SearchFiltersComponent.propTypes = {
   resultsCount: number,
   searchingInProgress: bool,
   onManageDisableScrolling: func.isRequired,
-  certificateFilter: propTypes.filterConfig,
-  yogaStylesFilter: propTypes.filterConfig,
-  priceFilter: propTypes.filterConfig,
+  dateRangeFilter: propTypes.filterConfig,
   isSearchFiltersPanelOpen: bool,
   toggleSearchFiltersPanel: func,
   searchFiltersPanelSelectedCount: number,
