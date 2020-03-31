@@ -37,3 +37,5 @@ export const dateRangeFilterConfig = {
 export const keywordFilterConfig = {
   active: true,
 };
+
+export const customerCommission = 0.0175;

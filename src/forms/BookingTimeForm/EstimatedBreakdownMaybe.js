@@ -29,11 +29,12 @@ import React from 'react';
 import Decimal from 'decimal.js';
 import { types as sdkTypes } from '../../util/sdkLoader';
 import { TRANSITION_REQUEST_PAYMENT, TX_TRANSITION_ACTOR_CUSTOMER } from '../../util/transaction';
-import { LINE_ITEM_UNITS } from '../../util/types';
+import { LINE_ITEM_CUSTOMER_COMMISSION, LINE_ITEM_UNITS } from '../../util/types';
 import { unitDivisor, convertMoneyToNumber, convertUnitToSubUnit } from '../../util/currency';
 import { BookingBreakdown } from '../../components';
 
 import css from './BookingTimeForm.css';
+import { customerCommission } from '../../marketplace-custom-config';
 
 const { Money, UUID } = sdkTypes;
 
@@ -53,6 +54,10 @@ const estimatedTransaction = (unitType, bookingStart, bookingEnd, unitPrice, qua
   const now = new Date();
   const totalPrice = estimatedTotalPrice(unitPrice, quantity);
 
+  const totalCustomerCommission = new Money(totalPrice.amount * customerCommission, totalPrice.currency);
+
+  const totalPriceAfterCommission = new Money(totalPrice.amount + totalCustomerCommission.amount, totalPrice.currency);
+
   return {
     id: new UUID('estimated-transaction'),
     type: 'transaction',
@@ -60,7 +65,7 @@ const estimatedTransaction = (unitType, bookingStart, bookingEnd, unitPrice, qua
       createdAt: now,
       lastTransitionedAt: now,
       lastTransition: TRANSITION_REQUEST_PAYMENT,
-      payinTotal: totalPrice,
+      payinTotal: totalPriceAfterCommission,
       payoutTotal: totalPrice,
       lineItems: [
         {
@@ -71,6 +76,14 @@ const estimatedTransaction = (unitType, bookingStart, bookingEnd, unitPrice, qua
           lineTotal: totalPrice,
           reversal: false,
         },
+        {
+          code: LINE_ITEM_CUSTOMER_COMMISSION,
+          includeFor: ['customer'],
+          unitPrice: unitPrice,
+          lineTotal: totalCustomerCommission,
+          reversal: false,
+          percentage: new Decimal(customerCommission),
+        }
       ],
       transitions: [
         {
@@ -102,6 +115,8 @@ const EstimatedBreakdownMaybe = props => {
   }
 
   const tx = estimatedTransaction(unitType, startDate, endDate, unitPrice, quantity);
+
+  console.log({ tx });
 
   return (
     <BookingBreakdown

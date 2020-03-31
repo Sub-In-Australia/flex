@@ -22,6 +22,8 @@ const isValidCommission = commissionLineItem => {
 const LineItemCustomerCommissionMaybe = props => {
   const { transaction, isCustomer, intl } = props;
 
+  // console.log({ transaction });
+
   const customerCommissionLineItem = transaction.attributes.lineItems.find(
     item => item.code === LINE_ITEM_CUSTOMER_COMMISSION && !item.reversal
   );
