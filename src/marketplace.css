@@ -33,13 +33,17 @@
 
     /* Align the image within the container */
     background-position: center center;
+
+    @media (--viewportLarge) {
+      background-image: url('../../assets/background-1440.jpg') image-set(url('../../assets/background-1440.jpg') 1x, url('../../assets/background-1440@2x.jpg') 2x);
+    }
   }
 
   /* ================ Colors ================ */
 
-  --marketplaceColor: #0095b3;
-  --marketplaceColorLight: #00bfe6;
-  --marketplaceColorDark: #006a80;
+  --marketplaceColor: #005be7;
+  --marketplaceColorLight: #cae0de;
+  --marketplaceColorDark: #000069;
 
   /* Used with inline CSS SVGs */
   --marketplaceColorEncoded: %230095b3;
