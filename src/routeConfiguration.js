@@ -22,6 +22,7 @@ import {
   StyleguidePage,
   TermsOfServicePage,
   TransactionPage,
+  HowToUsePage,
 } from './containers';
 
 // routeConfiguration needs to initialize containers first
@@ -280,6 +281,11 @@ const routeConfiguration = () => {
       path: '/privacy-policy',
       name: 'PrivacyPolicyPage',
       component: props => <PrivacyPolicyPage {...props} />,
+    },
+    {
+      path: '/how-to-use',
+      name: 'HowToUsePage',
+      component: props => <HowToUsePage {...props} />,
     },
     {
       path: '/styleguide',
