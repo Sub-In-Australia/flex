@@ -117,11 +117,11 @@ const Footer = props => {
                     name="SearchPage"
                     to={{
                       search:
-                        '?address=New%20York%20City%2C%20New%20York%2C%20USA&bounds=40.917576401307%2C-73.7008392055224%2C40.477399%2C-74.2590879797556',
+                        '?address=Melbourne%2C%20Victoria%2C%20Australia&bounds=-37.5112737225%2C145.512528832%2C-38.433859306%2C144.593741856',
                     }}
                     className={css.link}
                   >
-                    <FormattedMessage id="Footer.searchNewYork" />
+                    <FormattedMessage id="Footer.searchMelbourne" />
                   </NamedLink>
                 </li>
                 <li className={css.listItem}>
@@ -129,11 +129,11 @@ const Footer = props => {
                     name="SearchPage"
                     to={{
                       search:
-                        '?address=Los%20Angeles%2C%20California%2C%20USA&bounds=34.161440999758%2C-118.121305008073%2C33.9018913203336%2C-118.521456965901',
+                        '?address=Sydney%2C%20New%20South%20Wales%2C%20Australia&bounds=-33.578140996%2C151.343020992%2C-34.118344992%2C150.520928608',
                     }}
                     className={css.link}
                   >
-                    <FormattedMessage id="Footer.searchLosAngeles" />
+                    <FormattedMessage id="Footer.searchSydney" />
                   </NamedLink>
                 </li>
                 <li className={css.listItem}>
@@ -141,11 +141,11 @@ const Footer = props => {
                     name="SearchPage"
                     to={{
                       search:
-                        '?address=San%20Francisco%2C%20California%2C%20USA&bounds=37.8324430069081%2C-122.354995082683%2C37.6044780500533%2C-122.517910874663',
+                        '?address=Brisbane%2C%20Queensland%2C%20Australia&bounds=-26.996844991%2C153.31787024%2C-27.767436998%2C152.668522848',
                     }}
                     className={css.link}
                   >
-                    <FormattedMessage id="Footer.searchSanFrancisco" />
+                    <FormattedMessage id="Footer.searchBrisbane" />
                   </NamedLink>
                 </li>
                 <li className={css.listItem}>
@@ -153,23 +153,11 @@ const Footer = props => {
                     name="SearchPage"
                     to={{
                       search:
-                        '?address=Seattle%2C%20Washington%2C%20USA&bounds=47.7779392908564%2C-122.216605992108%2C47.3403950185547%2C-122.441233019046',
+                        '?address=Canberra%2C%20Australian%20Capital%20Territory%2C%20Australia&bounds=-35.147699163%2C149.263643456%2C-35.480260417%2C148.9959216',
                     }}
                     className={css.link}
                   >
-                    <FormattedMessage id="Footer.searchSeattle" />
-                  </NamedLink>
-                </li>
-                <li className={css.listItem}>
-                  <NamedLink
-                    name="SearchPage"
-                    to={{
-                      search:
-                        '?address=Portland%2C%20Oregon%2C%20USA&bounds=45.858099013046%2C-122.441059986416%2C45.3794799927623%2C-122.929215816001',
-                    }}
-                    className={css.link}
-                  >
-                    <FormattedMessage id="Footer.searchPortland" />
+                    <FormattedMessage id="Footer.searchCanberra" />
                   </NamedLink>
                 </li>
               </ul>
@@ -181,11 +169,11 @@ const Footer = props => {
                     name="SearchPage"
                     to={{
                       search:
-                        '?address=Denver%2C%20Colorado%2C%20United%20States%20of%20America&bounds=39.94623402%2C-104.600299056%2C39.62371698%2C-105.193616003506',
+                        '?address=address=Adelaide%2C%20South%20Australia%2C%20Australia&bounds=-34.652564053%2C138.780189824%2C-35.348970061%2C138.44212992',
                     }}
                     className={css.link}
                   >
-                    <FormattedMessage id="Footer.searchDenver" />
+                    <FormattedMessage id="Footer.searchAdelaide" />
                   </NamedLink>
                 </li>
                 <li className={css.listItem}>
@@ -193,11 +181,11 @@ const Footer = props => {
                     name="SearchPage"
                     to={{
                       search:
-                        '?address=Philadelphia%2C%20Pennsylvania%2C%20United%20States%20of%20America&bounds=40.1379937851305%2C-74.9557749984862%2C39.8557310196928%2C-75.2946589071447',
+                        '?address=Perth%2C%20Western%20Australia%2C%20Australia&bounds=-31.6244855145%2C116.239023008%2C-32.675715325%2C115.617614368',
                     }}
                     className={css.link}
                   >
-                    <FormattedMessage id="Footer.searchPhiladelphia" />
+                    <FormattedMessage id="Footer.searchPerth" />
                   </NamedLink>
                 </li>
                 <li className={css.listItem}>
@@ -205,11 +193,11 @@ const Footer = props => {
                     name="SearchPage"
                     to={{
                       search:
-                        '?address=Boston%2C%20Massachusetts%2C%20United%20States%20of%20America&bounds=42.3974009328397%2C-70.9860500028801%2C42.3196059806256%2C-71.1255750165112',
+                        '?address=Darwin%2C%20Northern%20Territory%2C%20Australia&bounds=-12.330059717%2C131.05149984%2C-12.521741584%2C130.815116992',
                     }}
                     className={css.link}
                   >
-                    <FormattedMessage id="Footer.searchBoston" />
+                    <FormattedMessage id="Footer.searchDarwin" />
                   </NamedLink>
                 </li>
                 <li className={css.listItem}>
@@ -217,23 +205,11 @@ const Footer = props => {
                     name="SearchPage"
                     to={{
                       search:
-                        '?address=San%20Diego%2C%20California%2C%20United%20States%20of%20America&bounds=33.0722089336828%2C-116.853118984%2C32.534171982%2C-117.266223298428',
+                        '?address=Hobart%2C%20Tasmania%2C%20Australia&bounds=-42.655375527%2C147.613383232%2C-43.014122643%2C147.133660416',
                     }}
                     className={css.link}
                   >
-                    <FormattedMessage id="Footer.searchSanDiego" />
-                  </NamedLink>
-                </li>
-                <li className={css.listItem}>
-                  <NamedLink
-                    name="SearchPage"
-                    to={{
-                      search:
-                        '?address=Boulder%2C%20Colorado%2C%20United%20States%20of%20America&bounds=40.1593785009969%2C-105.108872052936%2C39.9139839802231%2C-105.525489934809',
-                    }}
-                    className={css.link}
-                  >
-                    <FormattedMessage id="Footer.searchBoulder" />
+                    <FormattedMessage id="Footer.searchHobart" />
                   </NamedLink>
                 </li>
               </ul>
