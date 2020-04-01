@@ -18,6 +18,7 @@ import {
 } from '../../components';
 import { ProfileSettingsForm } from '../../forms';
 import { TopbarContainer } from '../../containers';
+import { ACCOUNT_TYPE_CHILDCARE_WORKER } from '../../util/types';
 
 import { updateProfile, uploadImage } from './ProfileSettingsPage.duck';
 import css from './ProfileSettingsPage.css';
@@ -46,7 +47,22 @@ export class ProfileSettingsPageComponent extends Component {
     } = this.props;
 
     const handleSubmit = values => {
-      const { firstName, lastName, bio: rawBio } = values;
+      const { firstName, lastName, bio: rawBio,
+
+        //For both
+        iReadTheTos, referenceCheck, ableToSupplyVerificationOfIC,
+        seekingOrProviding, phoneNumber,
+
+        //For Childcare worker (Provider)
+        wwvpRegistrationNumber, workingWithChildrenCheck,
+        vitRegistrationNumber, expiryDate, stateOfIssue,
+
+        //For Medical worker (Customer)
+        healthcareWorkerIdentifier, highRiskWithCovid19,
+        professionPosition, healthcareRegistrationNumber,
+        linkedIn, workingLocation,
+      } = values;
+      const isChildcareWorker = accountType === ACCOUNT_TYPE_CHILDCARE_WORKER;
 
       // Ensure that the optional bio is a string
       const bio = rawBio || '';
@@ -55,6 +71,29 @@ export class ProfileSettingsPageComponent extends Component {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         bio,
+        displayName: `${firstName.trim()} ${lastName.trim()}`,
+        publicData: isChildcareWorker ? {
+          accountType,
+          seekingOrProviding,
+        } : {
+            accountType, seekingOrProviding,
+
+            professionPosition, linkedIn, workingLocation,
+            highRiskWithCovid19,
+          },
+        privateData: isChildcareWorker ? {
+          iReadTheTos, referenceCheck, ableToSupplyVerificationOfIC,
+          phoneNumber,
+
+          wwvpRegistrationNumber, workingWithChildrenCheck,
+          vitRegistrationNumber, expiryDate, stateOfIssue,
+        } : {
+            iReadTheTos, referenceCheck, ableToSupplyVerificationOfIC,
+            phoneNumber,
+
+            healthcareWorkerIdentifier,
+            healthcareRegistrationNumber,
+          },
       };
       const uploadedImage = this.props.image;
 
@@ -68,15 +107,50 @@ export class ProfileSettingsPageComponent extends Component {
     };
 
     const user = ensureCurrentUser(currentUser);
-    const { firstName, lastName, bio } = user.attributes.profile;
+    const { firstName, lastName, bio, publicData, privateData } = user.attributes.profile;
     const profileImageId = user.profileImage ? user.profileImage.id : null;
     const profileImage = image || { imageId: profileImageId };
+    const {
+      accountType,
+      seekingOrProviding,
+
+      professionPosition, linkedIn, workingLocation,
+      highRiskWithCovid19,
+    } = publicData || {};
+    const {
+      iReadTheTos, referenceCheck, ableToSupplyVerificationOfIC,
+      phoneNumber,
+
+      //For Childcare worker (Provider)
+      wwvpRegistrationNumber, workingWithChildrenCheck,
+      vitRegistrationNumber, expiryDate, stateOfIssue,
+
+      //For Medical worker (Customer)
+      healthcareWorkerIdentifier,
+      healthcareRegistrationNumber,
+
+    } = privateData || {};
+
+    const isChildcareWorker = accountType === ACCOUNT_TYPE_CHILDCARE_WORKER;
+    const initialValuesSpecial = isChildcareWorker ? {
+      wwvpRegistrationNumber, workingWithChildrenCheck,
+      vitRegistrationNumber, expiryDate, stateOfIssue,
+    } : {
+        professionPosition, linkedIn, workingLocation,
+        healthcareWorkerIdentifier, highRiskWithCovid19,
+        healthcareRegistrationNumber,
+      }
 
     const profileSettingsForm = user.id ? (
       <ProfileSettingsForm
         className={css.form}
         currentUser={currentUser}
-        initialValues={{ firstName, lastName, bio, profileImage: user.profileImage }}
+        initialValues={{
+          firstName, lastName, bio, profileImage: user.profileImage,
+          accountType, seekingOrProviding, iReadTheTos, referenceCheck,
+          ableToSupplyVerificationOfIC, phoneNumber,
+          ...initialValuesSpecial,
+        }}
         profileImage={profileImage}
         onImageUpload={e => onImageUploadHandler(e, onImageUpload)}
         uploadInProgress={uploadInProgress}

@@ -6,7 +6,7 @@ import { withRouter, Redirect } from 'react-router-dom';
 import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 import classNames from 'classnames';
 import config from '../../config';
-import { propTypes } from '../../util/types';
+import { propTypes, ACCOUNT_TYPE_CHILDCARE_WORKER } from '../../util/types';
 import { ensureCurrentUser } from '../../util/data';
 import {
   isSignupEmailTakenError,
@@ -90,8 +90,8 @@ export class AuthenticationPageComponent extends Component {
         {isSignupEmailTakenError(signupError) ? (
           <FormattedMessage id="AuthenticationPage.signupFailedEmailAlreadyTaken" />
         ) : (
-          <FormattedMessage id="AuthenticationPage.signupFailed" />
-        )}
+            <FormattedMessage id="AuthenticationPage.signupFailed" />
+          )}
       </div>
     );
 
@@ -131,8 +131,53 @@ export class AuthenticationPageComponent extends Component {
     ];
 
     const handleSubmitSignup = values => {
-      const { fname, lname, ...rest } = values;
-      const params = { firstName: fname.trim(), lastName: lname.trim(), ...rest };
+      const { accountType, fname, lname,
+
+        //For both
+        iReadTheTos, referenceCheck, ableToSupplyVerificationOfIC,
+        seekingOrProviding, phoneNumber,
+
+        //For Childcare worker (Provider)
+        wwvpRegistrationNumber, workingWithChildrenCheck,
+        vitRegistrationNumber, expiryDate, stateOfIssue,
+
+        //For Medical worker (Customer)
+        healthcareWorkerIdentifier, highRiskWithCovid19,
+        professionPosition, healthcareRegistrationNumber,
+        linkedIn, workingLocation,
+
+        ...rest
+      } = values;
+      const isChildcareWorker = accountType === ACCOUNT_TYPE_CHILDCARE_WORKER;
+
+      const params = {
+        firstName: fname.trim(), lastName: lname.trim(),
+        displayName: `${fname.trim()} ${lname.trim()}`,
+        publicData: isChildcareWorker ? {
+            accountType,
+            seekingOrProviding,
+        } : {
+            accountType, seekingOrProviding,
+
+            professionPosition, linkedIn, workingLocation,
+            highRiskWithCovid19,
+          },
+        privateData: isChildcareWorker ? {
+          iReadTheTos, referenceCheck, ableToSupplyVerificationOfIC,
+          phoneNumber, 
+          
+          wwvpRegistrationNumber, workingWithChildrenCheck,
+          vitRegistrationNumber, expiryDate, stateOfIssue,
+        } : {
+          iReadTheTos, referenceCheck, ableToSupplyVerificationOfIC, 
+          phoneNumber,
+
+          healthcareWorkerIdentifier,
+          healthcareRegistrationNumber,
+
+        },
+        ...rest
+      };
       submitSignup(params);
     };
 
@@ -143,13 +188,13 @@ export class AuthenticationPageComponent extends Component {
         {isLogin ? (
           <LoginForm className={css.form} onSubmit={submitLogin} inProgress={authInProgress} />
         ) : (
-          <SignupForm
-            className={css.form}
-            onSubmit={handleSubmitSignup}
-            inProgress={authInProgress}
-            onOpenTermsOfService={() => this.setState({ tosModalOpen: true })}
-          />
-        )}
+            <SignupForm
+              className={css.form}
+              onSubmit={handleSubmitSignup}
+              inProgress={authInProgress}
+              onOpenTermsOfService={() => this.setState({ tosModalOpen: true })}
+            />
+          )}
       </div>
     );
 
@@ -200,8 +245,8 @@ export class AuthenticationPageComponent extends Component {
             {sendVerificationEmailInProgress ? (
               <FormattedMessage id="AuthenticationPage.sendingEmail" />
             ) : (
-              <FormattedMessage id="AuthenticationPage.resendEmail" values={{ resendEmailLink }} />
-            )}
+                <FormattedMessage id="AuthenticationPage.resendEmail" values={{ resendEmailLink }} />
+              )}
           </p>
           <p className={css.modalHelperText}>
             <FormattedMessage id="AuthenticationPage.fixEmail" values={{ fixEmailLink }} />

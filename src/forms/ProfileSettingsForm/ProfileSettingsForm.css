@@ -295,6 +295,14 @@
   }
 }
 
+.generalField {
+  margin-top: 24px;
+
+  @media (--viewportMedium) {
+    margin-top: 32px;
+  }
+}
+
 .firstName {
   width: calc(34% - 9px);
 }
@@ -310,6 +318,34 @@
   @media (--viewportMedium) {
     margin-top: 16px;
   }
+}
+
+.referenceCheck {
+  display: block;
+  margin-top: 24px;
+
+  @media (--viewportMedium) {
+    margin-top: 32px;
+  }
+}
+
+.referenceCheck span {
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.ableToSupplyVerificationOfIC {
+  display: block;
+  margin-top: 10px;
+
+  @media (--viewportMedium) {
+    margin-top: 20px;
+  }
+}
+
+.ableToSupplyVerificationOfIC span {
+  font-size: 18px;
+  line-height: 24px;
 }
 
 .submitButton {

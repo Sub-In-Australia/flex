@@ -39,3 +39,32 @@ export const keywordFilterConfig = {
 };
 
 export const customerCommission = 0.0175;
+
+export const accountTypes = [{
+  key: "childCareWorker",
+  labelId: "Config.accountType.childcareWorker",
+  role: 'provider'
+}, {
+  key: "medicalWorker",
+  labelId: "Config.accountType.medicalWorker",
+  role: 'customer'
+}];
+
+export const seekingOrProviding = [{
+  key: "providingChildcare",
+  labelId: "Config.seekingOrProviding.providing"
+}, {
+  key: "seekingChildcare",
+  labelId: "Config.seekingOrProviding.seeking"
+}];
+
+export const highRiskWithCovid19 = [{
+  key: "yes",
+  labelId: "Config.highRiskWithCovid19.yes"
+}, {
+  key: "no",
+  labelId: "Config.highRiskWithCovid19.no"
+}, {
+  key: "unsure",
+  labelId: "Config.highRiskWithCovid19.unsure"
+}];
