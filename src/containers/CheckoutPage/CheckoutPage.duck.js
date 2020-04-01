@@ -5,10 +5,11 @@ import { storableError } from '../../util/errors';
 import {
   TRANSITION_REQUEST_PAYMENT,
   TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY,
-  TRANSITION_CONFIRM_PAYMENT,
+  TRANSITION_CONFIRM_PAYMENT, generateBookingChainId,
 } from '../../util/transaction';
 import * as log from '../../util/log';
 import { fetchCurrentUserHasOrdersSuccess, fetchCurrentUser } from '../../ducks/user.duck';
+import { storeBookingChainId, getBookingChainId } from './CheckoutPageSessionHelpers';
 
 // ================ Action types ================ //
 
@@ -161,6 +162,14 @@ export const stripeCustomerError = e => ({
 
 export const initiateOrder = (orderParams, transactionId) => (dispatch, getState, sdk) => {
   dispatch(initiateOrderRequest());
+
+  const bookingChainId = getBookingChainId();
+  
+  if (bookingChainId) {
+    orderParams.protectedData = orderParams.protectedData || {};
+    orderParams.protectedData.bookingChainId = bookingChainId;
+  }
+
   const bodyParams = transactionId
     ? {
       id: transactionId,
@@ -296,6 +305,10 @@ export const speculateTransaction = params => (dispatch, getState, sdk) => {
 
 export const speculateTransactions = paramsArray => (dispatch, getState, sdk) => {
   dispatch(speculateTransactionRequest());
+
+  const bookingChainId = generateBookingChainId();
+  storeBookingChainId(bookingChainId);
+
   return Promise.all(paramsArray.map(params => {
     const bodyParams = {
       transition: TRANSITION_REQUEST_PAYMENT,

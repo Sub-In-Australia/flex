@@ -89,6 +89,21 @@ export const storeData = (bookingData, bookingDates, listing, transaction, stora
   }
 };
 
+// store bookingIdChain
+export const storeBookingChainId = (bookingIdChain) => {
+  if (window && window.sessionStorage) {
+    console.log('store', bookingIdChain);
+    window.sessionStorage.setItem('bookingChainId', bookingIdChain);
+  }
+};
+
+// get bookingIdChain
+export const getBookingChainId = () => {
+  if (window && window.sessionStorage) {
+    return window.sessionStorage.getItem('bookingChainId');
+  }
+};
+
 // Get stored data
 export const storedData = storageKey => {
   if (window && window.sessionStorage) {
