@@ -4,7 +4,7 @@ import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { types as sdkTypes } from '../../util/sdkLoader';
-import { REVIEW_TYPE_OF_PROVIDER, REVIEW_TYPE_OF_CUSTOMER, propTypes } from '../../util/types';
+import { REVIEW_TYPE_OF_PROVIDER, REVIEW_TYPE_OF_CUSTOMER, propTypes, ACCOUNT_TYPE_CHILDCARE_WORKER } from '../../util/types';
 import { ensureCurrentUser, ensureUser } from '../../util/data';
 import { withViewport } from '../../util/contextHelpers';
 import { isScrollingDisabled } from '../../ducks/UI.duck';
@@ -74,6 +74,50 @@ export class ProfilePageComponent extends Component {
     const displayName = profileUser.attributes.profile.displayName;
     const bio = profileUser.attributes.profile.bio;
     const hasBio = !!bio;
+    const publicData = profileUser.attributes.profile.publicData || {};
+    const {
+      accountType,
+      seekingOrProviding,
+      highRiskWithCovid19,
+      professionPosition, linkedIn, workingLocation,
+    } = publicData;
+    const isChildcareWorker = accountType === ACCOUNT_TYPE_CHILDCARE_WORKER;
+
+    const seekingOrProvidingObj = config.custom.seekingOrProviding.find(
+      item => item.key === seekingOrProviding
+    )
+    const seekingOrProvidingValue = seekingOrProviding ? 
+      intl.formatMessage({ id: seekingOrProvidingObj.labelId })
+      : null;
+    const seekingOrProvidingText = seekingOrProvidingValue ? intl.formatMessage({
+      id: 'ProfilePage.seekingOrProvidingText'
+    }, { seekingOrProvidingValue }) : '';
+
+    const highRiskWithCovid19Obj = config.custom.highRiskWithCovid19.find(
+      item => item.key === highRiskWithCovid19
+    )
+    const highRiskWithCovid19Value = highRiskWithCovid19 && !isChildcareWorker ? 
+      intl.formatMessage({ id: highRiskWithCovid19Obj.labelId })
+      : null;
+    const highRiskWithCovid19Text = highRiskWithCovid19Value ? <p className={css.highRiskWithCovid19}><label>{intl.formatMessage({
+      id: 'ProfilePage.highRiskWithCovid19Text'
+    })}:</label>{highRiskWithCovid19Value}</p> : '';
+
+    // Profession/Position - For Medical Worker (Customer)
+    const professionPositionLabel = intl.formatMessage({
+      id: 'ProfilePage.professionPositionLabel',
+    });
+
+    // LinkedIn Profile - For Medical Worker (Customer)
+    const linkedInLabel = intl.formatMessage({
+      id: 'ProfilePage.linkedInLabel',
+    });
+
+    // Location: Hospital/Healthcare Centre - For Medical Worker (Customer)
+    const workingLocationLabel = intl.formatMessage({
+      id: 'ProfilePage.workingLocationLabel',
+    });
+
     const isMobileLayout = viewport.width < MAX_MOBILE_SCREEN_WIDTH;
 
     const editLinkMobile = isCurrentUser ? (
@@ -178,6 +222,16 @@ export class ProfilePageComponent extends Component {
           <FormattedMessage id="ProfilePage.desktopHeading" values={{ name: displayName }} />
         </h1>
         {hasBio ? <p className={css.bio}>{bio}</p> : null}
+        {seekingOrProvidingText ? <p className={css.seekingOrProviding}>{seekingOrProvidingText}</p> : null}
+        {highRiskWithCovid19Text ? highRiskWithCovid19Text : null}
+        {!isChildcareWorker ? (
+          <>
+            <p className={css.moreInfo}><label>{professionPositionLabel}:</label>{professionPosition}</p>
+            <p className={css.moreInfo}><label>{linkedInLabel}:</label>{linkedIn}</p>
+            <p className={css.moreInfo}><label>{workingLocationLabel}:</label>{workingLocation}</p>
+          </>
+        ) : null}
+
         {isMobileLayout ? mobileReviews : desktopReviews}
       </div>
     );

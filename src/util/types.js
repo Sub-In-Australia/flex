@@ -505,3 +505,6 @@ export const DATE_TYPE_DATETIME = 'datetime';
 propTypes.dateType = oneOf([DATE_TYPE_DATE, DATE_TYPE_DATETIME]);
 
 export { propTypes };
+
+export const ACCOUNT_TYPE_CHILDCARE_WORKER = 'childCareWorker';
+export const ACCOUNT_TYPE_MEDICAL_WORKER = 'medicalWorker';

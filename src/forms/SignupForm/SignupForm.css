@@ -10,6 +10,26 @@
   }
 }
 
+.generalField {
+  margin-top: 24px;
+
+  @media (--viewportMedium) {
+    margin-top: 32px;
+  }
+}
+
+.accountType {
+
+}
+
+.email {
+  margin-top: 24px;
+
+  @media (--viewportMedium) {
+    margin-top: 32px;
+  }
+}
+
 .name {
   display: flex;
   justify-content: space-between;
@@ -30,6 +50,56 @@
 
 .password {
   @apply --marketplaceModalPasswordMargins;
+}
+
+.iReadTheTos {
+  margin-top: 24px;
+
+  @media (--viewportMedium) {
+    margin-top: 32px;
+  }
+}
+
+.referenceCheck {
+  margin-top: 24px;
+
+  @media (--viewportMedium) {
+    margin-top: 32px;
+  }
+}
+
+.referenceCheck span {
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.ableToSupplyVerificationOfIC {
+  margin-top: 24px;
+
+  @media (--viewportMedium) {
+    margin-top: 32px;
+  }
+}
+
+.ableToSupplyVerificationOfIC span {
+  font-size: 18px;
+  line-height: 24px;
+}
+
+.seekingOrProviding {
+  margin-top: 24px;
+
+  @media (--viewportMedium) {
+    margin-top: 32px;
+  }
+}
+
+.phoneNumber {
+  margin-top: 24px;
+
+  @media (--viewportMedium) {
+    margin-top: 32px;
+  }
 }
 
 .bottomWrapper {
