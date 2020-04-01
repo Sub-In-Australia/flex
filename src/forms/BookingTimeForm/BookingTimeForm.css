@@ -94,3 +94,12 @@
   }
   cursor: pointer;
 }
+
+.bookingDetailsContainer {
+  padding: 20px;
+  background-color: var(--attentionColorLight);
+}
+
+.bookingDetailIndex {
+  margin-bottom: -5px;
+}

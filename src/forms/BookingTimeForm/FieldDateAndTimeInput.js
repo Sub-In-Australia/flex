@@ -355,6 +355,7 @@ class FieldDateAndTimeInput extends Component {
       monthlyTimeSlots,
       timeZone,
       intl,
+      style,
     } = this.props;
 
     const classes = classNames(rootClassName || css.root, className);
@@ -438,11 +439,11 @@ class FieldDateAndTimeInput extends Component {
      */
 
     return (
-      <div className={classes}>
+      <div className={classes} style={style}>
         <div className={css.formRow}>
           <div className={classNames(css.field, css.startDate)}>
             <FieldDateInput
-              className={css.fieldDateInput}
+              className={classNames(css.fieldDateInput, css.fieldStartDate)}
               name={formId ? `${formId}.bookingStartDate` : 'bookingStartDate'}
               id={formId ? `${formId}.bookingStartDate` : 'bookingStartDate'}
               label={startDateInputProps.label}

@@ -27,6 +27,7 @@ const FieldArrayDateAndTimeInput = props => {
             return (
               <FieldDateAndTimeInput
                 {...rest}
+                style={{zIndex: fields.length - index}}
                 values={values[formName][index]
                   ? values[formName][index]
                   : {

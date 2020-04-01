@@ -116,10 +116,12 @@ export class BookingTimeFormComponent extends Component {
             })
             : null;
 
-          const shouldShowBookingsToggle = bookingData.filter(booking => booking).length >= 2;
+          const compactedBookings = bookingData.filter(booking => booking);
+
+          const shouldShowBookingsToggle = compactedBookings.length >= 2;
 
           const shouldShowBookingsDetails = !shouldShowBookingsToggle || this.state.showBookingsDetails;
-          
+
           const bookingStartLabel = intl.formatMessage({
             id: 'BookingTimeForm.bookingStartTitle',
           });
@@ -136,13 +138,31 @@ export class BookingTimeFormComponent extends Component {
                   </span>
                 )
               }
-              {shouldShowBookingsDetails && bookingData.map(data => {
-                return data
-                  ? (<EstimatedBreakdownMaybe bookingData={data} />)
-                  : null;
-              })}
+              {shouldShowBookingsDetails && (
+                <div className={shouldShowBookingsToggle && css.bookingDetailsContainer}>
+                  {
+                    bookingData.map((data, index) => {
+                      return data
+                        ? (
+                            <div>
+                              {shouldShowBookingsToggle && (<h5 className={css.bookingDetailIndex}>{`Booking #${index + 1}`}</h5>)}
+                              <EstimatedBreakdownMaybe bookingData={data} />
+                            </div>
+                          )
+                        : null;
+                    })
+                  }
+                </div>
+              )}
               {
-                bookingData.length > 1 && (
+                shouldShowBookingsToggle && this.state.showBookingsDetails && (
+                  <span className={css.toggleBookingBreakdown} onClick={this.handleToggleBookingsDetails}>
+                    <FormattedMessage id={toggleBookingsDetailsTranslationId}/>
+                  </span>
+                )
+              }
+              {
+                shouldShowBookingsToggle && (
                   <EstimatedBreakdownTotalMaybe bookingArray={bookingData}/>
                 )
               }

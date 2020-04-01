@@ -167,7 +167,7 @@ export const EstimatedBreakdownTotalMaybe = props => {
 
   return (
     <div>
-      <h3>Booking Summary:</h3>
+      <h3>Bookings Summary:</h3>
       <BookingBreakdown
         className={css.receipt}
         userRole="customer"
