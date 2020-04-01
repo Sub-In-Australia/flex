@@ -8,7 +8,7 @@ import { calculateQuantityFromHours, timestampToDate } from '../../util/dates';
 import { propTypes } from '../../util/types';
 import config from '../../config';
 import { Form, PrimaryButton } from '../../components';
-import EstimatedBreakdownMaybe from './EstimatedBreakdownMaybe';
+import EstimatedBreakdownMaybe, { EstimatedBreakdownTotalMaybe } from './EstimatedBreakdownMaybe';
 import FieldArrayDateAndTimeInput from './FieldArrayDateAndTimeInput';
 import arrayMutators from 'final-form-arrays';
 import moment from 'moment';
@@ -18,18 +18,31 @@ import css from './BookingTimeForm.css';
 export class BookingTimeFormComponent extends Component {
   constructor(props) {
     super(props);
-
     this.handleFormSubmit = this.handleFormSubmit.bind(this);
+    this.handleToggleBookingsDetails = this.handleToggleBookingsDetails.bind(this);
     this.bookingTime = [null];
+    this.state = { showBookingsDetails: false };
   }
 
   handleFormSubmit(e) {
     this.props.onSubmit(e);
   }
 
+  handleToggleBookingsDetails() {
+    // console.log('toggle');
+    // console.log(this.state.showBookingsDetails);
+    this.setState({
+      showBookingsDetails: !this.state.showBookingsDetails
+    })
+  };
+
   render() {
     const { rootClassName, className, price: unitPrice, ...rest } = this.props;
     const classes = classNames(rootClassName || css.root, className);
+
+    // console.log(this.state.showBookingsDetails, 'render');
+
+    const toggleBookingsDetailsTranslationId = this.state.showBookingsDetails ? "BookingTimeForm.hideBookingsDetails" : "BookingTimeForm.showBookingsDetails";
 
     if (!unitPrice) {
       return (
@@ -101,8 +114,12 @@ export class BookingTimeFormComponent extends Component {
                 }
                 : null
             })
-            : null
+            : null;
 
+          const shouldShowBookingsToggle = bookingData.filter(booking => booking).length >= 2;
+
+          const shouldShowBookingsDetails = !shouldShowBookingsToggle || this.state.showBookingsDetails;
+          
           const bookingStartLabel = intl.formatMessage({
             id: 'BookingTimeForm.bookingStartTitle',
           });
@@ -112,11 +129,23 @@ export class BookingTimeFormComponent extends Component {
               <h3 className={css.priceBreakdownTitle}>
                 <FormattedMessage id="BookingTimeForm.priceBreakdownTitle" />
               </h3>
-              {bookingData.map(data => {
+              {
+                shouldShowBookingsToggle && (
+                  <span className={css.toggleBookingBreakdown} onClick={this.handleToggleBookingsDetails}>
+                    <FormattedMessage id={toggleBookingsDetailsTranslationId}/>
+                  </span>
+                )
+              }
+              {shouldShowBookingsDetails && bookingData.map(data => {
                 return data
                   ? (<EstimatedBreakdownMaybe bookingData={data} />)
                   : null;
               })}
+              {
+                bookingData.length > 1 && (
+                  <EstimatedBreakdownTotalMaybe bookingArray={bookingData}/>
+                )
+              }
             </div>
           ) : null;
 
@@ -138,7 +167,7 @@ export class BookingTimeFormComponent extends Component {
             endDateInputProps,
           };
 
-          //We use this to store and get old booking time values 
+          //We use this to store and get old booking time values
           //monthlyTimeSlots got update would trigger the form to re-render
           if (!values.bookingTime[0] && this.bookingTime[0]) {
             form.change('bookingTime', this.bookingTime);

@@ -32,6 +32,7 @@ import { TRANSITION_REQUEST_PAYMENT, TX_TRANSITION_ACTOR_CUSTOMER } from '../../
 import { LINE_ITEM_CUSTOMER_COMMISSION, LINE_ITEM_UNITS } from '../../util/types';
 import { unitDivisor, convertMoneyToNumber, convertUnitToSubUnit } from '../../util/currency';
 import { BookingBreakdown } from '../../components';
+import { last } from 'lodash';
 
 import css from './BookingTimeForm.css';
 import { customerCommission } from '../../marketplace-custom-config';
@@ -116,8 +117,6 @@ const EstimatedBreakdownMaybe = props => {
 
   const tx = estimatedTransaction(unitType, startDate, endDate, unitPrice, quantity);
 
-  console.log({ tx });
-
   return (
     <BookingBreakdown
       className={css.receipt}
@@ -131,3 +130,53 @@ const EstimatedBreakdownMaybe = props => {
 };
 
 export default EstimatedBreakdownMaybe;
+
+const createVirtualMasterTransaction = (bookings) => {
+  // calculate sum of quantity, booking start, booking end, totalPrice
+  const masterBooking = bookings.slice(1).reduce((masterTx, tx) => {
+    masterTx.quantity += tx.quantity;
+    masterTx.startDate = masterTx.startDate < tx.startDate ? masterTx.startDate : tx.startDate;
+    masterTx.endDate = masterTx.endDate > tx.endDate ? masterTx.endDate : tx.endDate;
+    return masterTx;
+  }, bookings[0]);
+
+  return masterBooking;
+};
+
+export const EstimatedBreakdownTotalMaybe = props => {
+  // compact the booking array;
+  const bookings = props.bookingArray.filter(booking => booking);
+
+  if (bookings.length < 1) {
+    return null;
+  }
+
+  const masterTransaction = createVirtualMasterTransaction(bookings);
+
+  const { unitType, unitPrice, startDate, endDate, quantity, timeZone } = masterTransaction;
+
+  const isUnits = unitType === LINE_ITEM_UNITS;
+  const quantityIfUsingUnits = !isUnits || Number.isInteger(quantity);
+  const canEstimatePrice = startDate && endDate && unitPrice && quantityIfUsingUnits;
+
+  if (!canEstimatePrice) {
+    return null;
+  }
+
+  const tx = estimatedTransaction(unitType, startDate, endDate, unitPrice, quantity);
+
+  return (
+    <div>
+      <h3>Booking Summary:</h3>
+      <BookingBreakdown
+        className={css.receipt}
+        userRole="customer"
+        unitType={unitType}
+        transaction={tx}
+        booking={tx.booking}
+        timeZone={timeZone}
+        displayHour={false}
+      />
+    </div>
+  );
+};

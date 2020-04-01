@@ -111,9 +111,9 @@ export class ListingPageComponent extends Component {
       const bookingDate = {
         bookingStart,
         bookingEnd,
-      }
+      };
       result.bookingData.push(bookingData);
-      result.bookingDates.push(bookingDate)
+      result.bookingDates.push(bookingDate);
       return result;
     }, { bookingData: [], bookingDates: [] });
 

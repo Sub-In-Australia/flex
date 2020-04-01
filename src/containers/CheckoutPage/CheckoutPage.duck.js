@@ -164,7 +164,7 @@ export const initiateOrder = (orderParams, transactionId) => (dispatch, getState
   dispatch(initiateOrderRequest());
 
   const bookingChainId = getBookingChainId();
-  
+
   if (bookingChainId) {
     orderParams.protectedData = orderParams.protectedData || {};
     orderParams.protectedData.bookingChainId = bookingChainId;

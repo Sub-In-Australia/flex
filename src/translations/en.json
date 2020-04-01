@@ -94,6 +94,8 @@
   "BookingTimeForm.requiredDate": "Oops, make sure your date is correct!",
   "BookingTimeForm.timeSlotsError": "Loading  availability failed. Please refresh the page.",
   "BookingTimeForm.youWontBeChargedInfo": "You won't be charged yet",
+  "BookingTimeForm.showBookingsDetails": "+ Show bookings details",
+  "BookingTimeForm.hideBookingsDetails": "- Hide bookings details",
   "CheckoutPage.bookingTimeNotAvailableMessage": "Unfortunately, the requested time is already booked.",
   "CheckoutPage.chargeDisabledMessage": "This provider's payout information is incomplete so the session cannot be booked. Please contact the marketplace administrators.",
   "CheckoutPage.errorlistingLinkText": "the teacher profile page",

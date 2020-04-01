@@ -6,7 +6,7 @@ import { LINE_ITEM_NIGHT, LINE_ITEM_UNITS, DATE_TYPE_DATE, propTypes } from '../
 import css from './BookingBreakdown.css';
 
 const BookingPeriod = props => {
-  const { startDate, endDate, dateType, timeZone } = props;
+  const { startDate, endDate, dateType, timeZone, displayHour } = props;
 
   const timeFormatOptions =
     dateType === DATE_TYPE_DATE
@@ -26,6 +26,8 @@ const BookingPeriod = props => {
 
   const timeZoneMaybe = timeZone ? { timeZone } : null;
 
+  const dateClassName = displayHour !== false ? css.itemLabel : css.dayInfo;
+
   return (
     <>
       <div className={css.bookingPeriod}>
@@ -33,10 +35,14 @@ const BookingPeriod = props => {
           <div className={css.dayLabel}>
             <FormattedMessage id="BookingBreakdown.bookingStart" />
           </div>
-          <div className={css.dayInfo}>
-            <FormattedDate value={startDate} {...timeFormatOptions} {...timeZoneMaybe} />
-          </div>
-          <div className={css.itemLabel}>
+          {
+            displayHour !== false && (
+              <div className={css.dayInfo}>
+                <FormattedDate value={startDate} {...timeFormatOptions} {...timeZoneMaybe} />
+              </div>
+            )
+          }
+          <div className={dateClassName}>
             <FormattedDate value={startDate} {...dateFormatOptions} {...timeZoneMaybe} />
           </div>
         </div>
@@ -45,10 +51,14 @@ const BookingPeriod = props => {
           <div className={css.dayLabel}>
             <FormattedMessage id="BookingBreakdown.bookingEnd" />
           </div>
-          <div className={css.dayInfo}>
-            <FormattedDate value={endDate} {...timeFormatOptions} {...timeZoneMaybe} />
-          </div>
-          <div className={css.itemLabel}>
+          {
+            displayHour !== false && (
+              <div className={css.dayInfo}>
+                <FormattedDate value={endDate} {...timeFormatOptions} {...timeZoneMaybe} />
+              </div>
+            )
+          }
+          <div className={dateClassName}>
             <FormattedDate value={endDate} {...dateFormatOptions} {...timeZoneMaybe} />
           </div>
         </div>
@@ -58,7 +68,7 @@ const BookingPeriod = props => {
 };
 
 const LineItemBookingPeriod = props => {
-  const { booking, unitType, dateType, timeZone } = props;
+  const { booking, unitType, dateType, timeZone, displayHour } = props;
 
   // Attributes: displayStart and displayEnd can be used to differentiate shown time range
   // from actual start and end times used for availability reservation. It can help in situations
@@ -81,6 +91,7 @@ const LineItemBookingPeriod = props => {
           endDate={endDay}
           dateType={dateType}
           timeZone={timeZone}
+          displayHour={displayHour}
         />
       </div>
       <hr className={css.totalDivider} />

@@ -85,3 +85,12 @@
     width: 100%;
   }
 }
+
+.toggleBookingBreakdown {
+  @apply --marketplaceH4FontStyles;
+  color: var(--marketplaceColorDark);
+  &:hover {
+    color: var(--marketplaceColorLight);
+  }
+  cursor: pointer;
+}

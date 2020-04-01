@@ -11,4 +11,5 @@
   &:hover {
     color: var(--marketplaceColorLight);
   }
+  cursor: pointer;
 }

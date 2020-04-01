@@ -3,7 +3,7 @@
  * I.e. dates and other details related to payment decision in receipt format.
  */
 import React from 'react';
-import { oneOf, string } from 'prop-types';
+import { oneOf, string, bool } from 'prop-types';
 import { FormattedMessage, intlShape, injectIntl } from '../../util/reactIntl';
 import classNames from 'classnames';
 import {
@@ -37,6 +37,7 @@ export const BookingBreakdownComponent = props => {
     intl,
     dateType,
     timeZone,
+    displayHour,
   } = props;
 
   const isCustomer = userRole === 'customer';
@@ -95,6 +96,7 @@ export const BookingBreakdownComponent = props => {
         unitType={unitType}
         dateType={dateType}
         timeZone={timeZone}
+        displayHour={displayHour}
       />
       <LineItemUnitPriceMaybe transaction={transaction} unitType={unitType} intl={intl} />
 
@@ -147,6 +149,7 @@ BookingBreakdownComponent.defaultProps = {
   className: null,
   dateType: null,
   timeZone: null,
+  displayHour: true,
 };
 
 BookingBreakdownComponent.propTypes = {
@@ -159,6 +162,7 @@ BookingBreakdownComponent.propTypes = {
   booking: propTypes.booking.isRequired,
   dateType: propTypes.dateType,
   timeZone: string,
+  displayHour: bool,
 
   // from injectIntl
   intl: intlShape.isRequired,
