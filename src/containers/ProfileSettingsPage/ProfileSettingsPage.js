@@ -46,12 +46,24 @@ export class ProfileSettingsPageComponent extends Component {
       intl,
     } = this.props;
 
+    const user = ensureCurrentUser(currentUser);
+    const { firstName, lastName, bio, publicData, privateData } = user.attributes.profile;
+    const profileImageId = user.profileImage ? user.profileImage.id : null;
+    const profileImage = image || { imageId: profileImageId };
+    const {
+      accountType,
+      seekingOrProviding,
+
+      professionPosition, linkedIn, workingLocation,
+      highRiskWithCovid19,
+    } = publicData || {};
+
     const handleSubmit = values => {
       const { firstName, lastName, bio: rawBio,
 
         //For both
         iReadTheTos, referenceCheck, ableToSupplyVerificationOfIC,
-        seekingOrProviding, phoneNumber,
+        phoneNumber,
 
         //For Childcare worker (Provider)
         wwvpRegistrationNumber, workingWithChildrenCheck,
@@ -73,11 +85,8 @@ export class ProfileSettingsPageComponent extends Component {
         bio,
         displayName: `${firstName.trim()} ${lastName.trim()}`,
         publicData: isChildcareWorker ? {
-          accountType,
-          seekingOrProviding,
+          
         } : {
-            accountType, seekingOrProviding,
-
             professionPosition, linkedIn, workingLocation,
             highRiskWithCovid19,
           },
@@ -106,17 +115,6 @@ export class ProfileSettingsPageComponent extends Component {
       onUpdateProfile(updatedValues);
     };
 
-    const user = ensureCurrentUser(currentUser);
-    const { firstName, lastName, bio, publicData, privateData } = user.attributes.profile;
-    const profileImageId = user.profileImage ? user.profileImage.id : null;
-    const profileImage = image || { imageId: profileImageId };
-    const {
-      accountType,
-      seekingOrProviding,
-
-      professionPosition, linkedIn, workingLocation,
-      highRiskWithCovid19,
-    } = publicData || {};
     const {
       iReadTheTos, referenceCheck, ableToSupplyVerificationOfIC,
       phoneNumber,
@@ -147,7 +145,7 @@ export class ProfileSettingsPageComponent extends Component {
         currentUser={currentUser}
         initialValues={{
           firstName, lastName, bio, profileImage: user.profileImage,
-          accountType, seekingOrProviding, iReadTheTos, referenceCheck,
+          accountType, iReadTheTos, referenceCheck,
           ableToSupplyVerificationOfIC, phoneNumber,
           ...initialValuesSpecial,
         }}

@@ -40,21 +40,11 @@ export const keywordFilterConfig = {
 
 export const customerCommission = 0.0175;
 
-export const accountTypes = [{
-  key: "childCareWorker",
-  labelId: "Config.accountType.childcareWorker",
-  role: 'provider'
-}, {
-  key: "medicalWorker",
-  labelId: "Config.accountType.medicalWorker",
-  role: 'customer'
-}];
-
 export const seekingOrProviding = [{
-  key: "providingChildcare",
+  key: "childCareWorker",
   labelId: "Config.seekingOrProviding.providing"
 }, {
-  key: "seekingChildcare",
+  key: "medicalWorker",
   labelId: "Config.seekingOrProviding.seeking"
 }];
 

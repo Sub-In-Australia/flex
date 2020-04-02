@@ -29,9 +29,7 @@ const SignupFormComponent = props => (
         inProgress,
         invalid,
         intl,
-        values,
         onOpenTermsOfService,
-        accountTypes,
         seekingOrProviding,
         highRiskWithCovid19,
       } = fieldRenderProps;
@@ -324,18 +322,6 @@ const SignupFormComponent = props => (
       return (
         <Form className={classes} onSubmit={handleSubmit}>
           <div>
-            <FieldSelect
-              id={formId ? `${formId}.accountType` : 'accountType'}
-              name="accountType"
-              label={accountTypeLabel}
-              className={css.accountType}
-              validate={accountTypeRequired}
-            >
-              <option value="" disabled>{accountTypePlaceholder}</option>
-              {accountTypes.map(type => (
-                <option key={type.key} value={type.key}>{intl.formatMessage({ id: type.labelId })}</option>
-              ))}
-            </FieldSelect>
             <FieldTextInput
               type="email"
               id={formId ? `${formId}.email` : 'email'}
@@ -407,8 +393,8 @@ const SignupFormComponent = props => (
           />
 
           <FieldSelect
-            id={formId ? `${formId}.seekingOrProviding` : 'seekingOrProviding'}
-            name="seekingOrProviding"
+            id={formId ? `${formId}.accountType` : 'accountType'}
+            name="accountType"
             label={seekingOrProvidingLabel}
             className={css.seekingOrProviding}
             validate={seekingOrProvidingRequired}
@@ -554,7 +540,6 @@ const SignupFormComponent = props => (
 
 SignupFormComponent.defaultProps = {
   inProgress: false,
-  accountTypes: config.custom.accountTypes,
   seekingOrProviding: config.custom.seekingOrProviding,
   highRiskWithCovid19: config.custom.highRiskWithCovid19
 };
@@ -563,7 +548,6 @@ const { bool, func } = PropTypes;
 
 SignupFormComponent.propTypes = {
   inProgress: bool,
-  accountTypes: array,
   seekingOrProviding: array,
   highRiskWithCovid19: array,
 
