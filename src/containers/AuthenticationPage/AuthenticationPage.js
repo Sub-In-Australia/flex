@@ -135,7 +135,7 @@ export class AuthenticationPageComponent extends Component {
 
         //For both
         iReadTheTos, referenceCheck, ableToSupplyVerificationOfIC,
-        seekingOrProviding, phoneNumber,
+        phoneNumber,
 
         //For Childcare worker (Provider)
         wwvpRegistrationNumber, workingWithChildrenCheck,
@@ -155,9 +155,8 @@ export class AuthenticationPageComponent extends Component {
         displayName: `${fname.trim()} ${lname.trim()}`,
         publicData: isChildcareWorker ? {
             accountType,
-            seekingOrProviding,
         } : {
-            accountType, seekingOrProviding,
+            accountType,
 
             professionPosition, linkedIn, workingLocation,
             highRiskWithCovid19,

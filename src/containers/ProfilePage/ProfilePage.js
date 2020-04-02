@@ -77,16 +77,15 @@ export class ProfilePageComponent extends Component {
     const publicData = profileUser.attributes.profile.publicData || {};
     const {
       accountType,
-      seekingOrProviding,
       highRiskWithCovid19,
       professionPosition, linkedIn, workingLocation,
     } = publicData;
     const isChildcareWorker = accountType === ACCOUNT_TYPE_CHILDCARE_WORKER;
 
     const seekingOrProvidingObj = config.custom.seekingOrProviding.find(
-      item => item.key === seekingOrProviding
+      item => item.key === accountType
     )
-    const seekingOrProvidingValue = seekingOrProviding ? 
+    const seekingOrProvidingValue = accountType ? 
       intl.formatMessage({ id: seekingOrProvidingObj.labelId })
       : null;
     const seekingOrProvidingText = seekingOrProvidingValue ? intl.formatMessage({
@@ -99,9 +98,9 @@ export class ProfilePageComponent extends Component {
     const highRiskWithCovid19Value = highRiskWithCovid19 && !isChildcareWorker ? 
       intl.formatMessage({ id: highRiskWithCovid19Obj.labelId })
       : null;
-    const highRiskWithCovid19Text = highRiskWithCovid19Value ? <p className={css.highRiskWithCovid19}><label>{intl.formatMessage({
+    const highRiskWithCovid19Text = highRiskWithCovid19Value ? <p className={css.moreInfo}><label>{intl.formatMessage({
       id: 'ProfilePage.highRiskWithCovid19Text'
-    })}:</label>{highRiskWithCovid19Value}</p> : '';
+    })}:</label><span>{highRiskWithCovid19Value}</span></p> : '';
 
     // Profession/Position - For Medical Worker (Customer)
     const professionPositionLabel = intl.formatMessage({
@@ -226,9 +225,9 @@ export class ProfilePageComponent extends Component {
         {highRiskWithCovid19Text ? highRiskWithCovid19Text : null}
         {!isChildcareWorker ? (
           <>
-            <p className={css.moreInfo}><label>{professionPositionLabel}:</label>{professionPosition}</p>
-            <p className={css.moreInfo}><label>{linkedInLabel}:</label>{linkedIn}</p>
-            <p className={css.moreInfo}><label>{workingLocationLabel}:</label>{workingLocation}</p>
+            <p className={css.moreInfo}><label>{professionPositionLabel}:</label><span>{professionPosition}</span></p>
+            <p className={css.moreInfo}><label>{linkedInLabel}:</label><span>{linkedIn}</span></p>
+            <p className={css.moreInfo}><label>{workingLocationLabel}:</label><span>{workingLocation}</span></p>
           </>
         ) : null}
 

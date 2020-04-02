@@ -66,7 +66,6 @@ class ProfileSettingsFormComponent extends Component {
             uploadInProgress,
             form,
             values,
-            seekingOrProviding,
             highRiskWithCovid19,
           } = fieldRenderProps;
 
@@ -137,18 +136,6 @@ class ProfileSettingsFormComponent extends Component {
           const ableToSupplyVerificationOfICLabel = intl.formatMessage({
             id: 'ProfileSettingsForm.ableToSupplyVerificationOfICLabel'
           });
-
-          // Seeking or Providing
-          const seekingOrProvidingLabel = intl.formatMessage({
-            id: 'ProfileSettingsForm.seekingOrProvidingLabel'
-          });
-          const seekingOrProvidingPlaceholder = intl.formatMessage({
-            id: 'ProfileSettingsForm.seekingOrProvidingPlaceholder',
-          });
-          const seekingOrProvidingRequiredMessage = intl.formatMessage({
-            id: 'ProfileSettingsForm.seekingOrProvidingRequired',
-          });
-          const seekingOrProvidingRequired = validators.required(seekingOrProvidingRequiredMessage);
 
 
           // Healthcare worker identifier - For Medical Worker (Customer)
@@ -533,18 +520,6 @@ class ProfileSettingsFormComponent extends Component {
                   className={css.ableToSupplyVerificationOfIC}
                 />
 
-                <FieldSelect
-                  id={'seekingOrProviding'}
-                  name="seekingOrProviding"
-                  label={seekingOrProvidingLabel}
-                  className={css.generalField}
-                  validate={seekingOrProvidingRequired}
-                >
-                  <option value="" disabled>{seekingOrProvidingPlaceholder}</option>
-                  {seekingOrProviding.map(type => (
-                    <option key={type.key} value={type.key}>{intl.formatMessage({ id: type.labelId })}</option>
-                  ))}
-                </FieldSelect>
                 <Condition when="accountType" is={ACCOUNT_TYPE_CHILDCARE_WORKER}>
                   <FieldTextInput
                     className={css.generalField}
@@ -674,7 +649,6 @@ ProfileSettingsFormComponent.defaultProps = {
   uploadImageError: null,
   updateProfileError: null,
   updateProfileReady: false,
-  seekingOrProviding: config.custom.seekingOrProviding,
   highRiskWithCovid19: config.custom.highRiskWithCovid19
 };
 
@@ -687,7 +661,6 @@ ProfileSettingsFormComponent.propTypes = {
   updateInProgress: bool.isRequired,
   updateProfileError: propTypes.error,
   updateProfileReady: bool,
-  seekingOrProviding: array,
   highRiskWithCovid19: array,
 
   // from injectIntl

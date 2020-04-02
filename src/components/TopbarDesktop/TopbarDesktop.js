@@ -3,7 +3,7 @@ import { bool, func, object, number, string } from 'prop-types';
 import { FormattedMessage, intlShape } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { ACCOUNT_SETTINGS_PAGES } from '../../routeConfiguration';
-import { propTypes } from '../../util/types';
+import { propTypes, ACCOUNT_TYPE_CHILDCARE_WORKER, ACCOUNT_TYPE_MEDICAL_WORKER } from '../../util/types';
 import {
   Avatar,
   InlineTextButton,
@@ -19,6 +19,7 @@ import {
 import { TopbarSearchForm } from '../../forms';
 
 import css from './TopbarDesktop.css';
+import { ensureCurrentUser } from '../../util/data';
 
 const TopbarDesktop = props => {
   const {
@@ -44,6 +45,9 @@ const TopbarDesktop = props => {
 
   const authenticatedOnClientSide = mounted && isAuthenticated;
   const isAuthenticatedOrJustHydrated = isAuthenticated || !mounted;
+  const ensuredCurrentUser = ensureCurrentUser(currentUser);
+  const isChildcareWorker = ensuredCurrentUser.attributes.profile.publicData
+    && ensuredCurrentUser.attributes.profile.publicData.accountType === ACCOUNT_TYPE_CHILDCARE_WORKER
 
   const classes = classNames(rootClassName || css.root, className);
 
@@ -83,22 +87,24 @@ const TopbarDesktop = props => {
         <Avatar className={css.avatar} user={currentUser} disableProfileLink />
       </MenuLabel>
       <MenuContent className={css.profileMenuContent}>
-        <MenuItem key="EditListingPage">
-          <OwnListingLink
-            listing={currentUserListing}
-            listingFetched={currentUserListingFetched}
-            className={css.yourListingsLink}
-          >
-            <div>
-              <span className={css.menuItemBorder} />
-              {currentUserListing ? (
-                <FormattedMessage id="TopbarDesktop.editYourListingLink" />
-              ) : (
-                <FormattedMessage id="TopbarDesktop.addYourListingLink" />
-              )}
-            </div>
-          </OwnListingLink>
-        </MenuItem>
+        {isChildcareWorker ? (
+          <MenuItem key="EditListingPage">
+            <OwnListingLink
+              listing={currentUserListing}
+              listingFetched={currentUserListingFetched}
+              className={css.yourListingsLink}
+            >
+              <div>
+                <span className={css.menuItemBorder} />
+                {currentUserListing ? (
+                  <FormattedMessage id="TopbarDesktop.editYourListingLink" />
+                ) : (
+                    <FormattedMessage id="TopbarDesktop.addYourListingLink" />
+                  )}
+              </div>
+            </OwnListingLink>
+          </MenuItem>) : (<MenuItem key="EditListingPage"><div></div></MenuItem>)
+        }
         <MenuItem key="ProfileSettingsPage">
           <NamedLink
             className={classNames(css.profileSettingsLink, currentPageClass('ProfileSettingsPage'))}
@@ -124,7 +130,7 @@ const TopbarDesktop = props => {
           </InlineTextButton>
         </MenuItem>
       </MenuContent>
-    </Menu>
+    </Menu >
   ) : null;
 
   const signupLink = isAuthenticatedOrJustHydrated ? null : (
@@ -157,13 +163,14 @@ const TopbarDesktop = props => {
     ) : null;
 
   const createListingLink =
-    isAuthenticatedOrJustHydrated && !(currentUserListingFetched && !currentUserListing) ? null : (
-      <NamedLink className={css.createListingLink} name="NewListingPage">
-        <span className={css.createListing}>
-          <FormattedMessage id="TopbarDesktop.createListing" />
-        </span>
-      </NamedLink>
-    );
+    isAuthenticatedOrJustHydrated 
+    && !(currentUserListingFetched && !currentUserListing) ? null : (
+        <NamedLink className={css.createListingLink} name="NewListingPage">
+          <span className={css.createListing}>
+            <FormattedMessage id="TopbarDesktop.createListing" />
+          </span>
+        </NamedLink>
+      );
 
   return (
     <nav className={classes}>
@@ -176,7 +183,7 @@ const TopbarDesktop = props => {
       </NamedLink>
       {search}
       {listingLink}
-      {createListingLink}
+      {isChildcareWorker && createListingLink}
       {inboxLink}
       {profileMenu}
       {signupLink}

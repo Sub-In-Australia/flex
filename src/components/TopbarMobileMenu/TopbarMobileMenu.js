@@ -7,7 +7,7 @@ import { bool, func, number, string } from 'prop-types';
 import { FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 import { ACCOUNT_SETTINGS_PAGES } from '../../routeConfiguration';
-import { propTypes } from '../../util/types';
+import { propTypes, ACCOUNT_TYPE_CHILDCARE_WORKER } from '../../util/types';
 import { ensureCurrentUser } from '../../util/data';
 import {
   AvatarLarge,
@@ -32,6 +32,8 @@ const TopbarMobileMenu = props => {
   } = props;
 
   const user = ensureCurrentUser(currentUser);
+  const isChildcareWorker = user.attributes.profile.publicData
+    && user.attributes.profile.publicData.accountType === ACCOUNT_TYPE_CHILDCARE_WORKER
 
   if (!isAuthenticated) {
     const signup = (
@@ -62,9 +64,11 @@ const TopbarMobileMenu = props => {
           </div>
         </div>
         <div className={css.footer}>
-          <NamedLink className={css.createNewListingLink} name="NewListingPage">
-            <FormattedMessage id="TopbarMobileMenu.newListingLink" />
-          </NamedLink>
+          {isChildcareWorker &&
+            <NamedLink className={css.createNewListingLink} name="NewListingPage">
+              <FormattedMessage id="TopbarMobileMenu.newListingLink" />
+            </NamedLink>
+          }
         </div>
       </div>
     );
@@ -100,11 +104,13 @@ const TopbarMobileMenu = props => {
           <FormattedMessage id="TopbarMobileMenu.inboxLink" />
           {notificationCountBadge}
         </NamedLink>
-        <OwnListingLink
-          listing={currentUserListing}
-          listingFetched={currentUserListingFetched}
-          className={css.navigationLink}
-        />
+        {isChildcareWorker &&
+          <OwnListingLink
+            listing={currentUserListing}
+            listingFetched={currentUserListingFetched}
+            className={css.navigationLink}
+          />
+        }
         <NamedLink
           className={classNames(css.navigationLink, currentPageClass('ProfileSettingsPage'))}
           name="ProfileSettingsPage"
@@ -119,9 +125,11 @@ const TopbarMobileMenu = props => {
         </NamedLink>
       </div>
       <div className={css.footer}>
-        <NamedLink className={css.createNewListingLink} name="NewListingPage">
-          <FormattedMessage id="TopbarMobileMenu.newListingLink" />
-        </NamedLink>
+        {isChildcareWorker &&
+          <NamedLink className={css.createNewListingLink} name="NewListingPage">
+            <FormattedMessage id="TopbarMobileMenu.newListingLink" />
+          </NamedLink>
+        }
       </div>
     </div>
   );
