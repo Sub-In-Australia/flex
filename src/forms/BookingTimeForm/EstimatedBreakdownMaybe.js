@@ -132,30 +132,32 @@ const EstimatedBreakdownMaybe = props => {
 export default EstimatedBreakdownMaybe;
 
 const normalizeTransactionForEstimate = (tx) => {
-  if (!tx.quantity) {
-    const { start, end } = tx.booking.attributes;
-    tx.quantity = (end - start) / 3600000;
+  const normalizedTx = cloneDeep(tx);
+  if (!normalizedTx.quantity) {
+    const { start, end } = normalizedTx.booking.attributes;
+    normalizedTx.quantity = (end - start) / 3600000;
 
-    tx.startDate = start;
-    tx.endDate = end;
-    tx.unitType = LINE_ITEM_UNITS;
-    const unitLineItem = tx.attributes.lineItems.find(l => l.code === LINE_ITEM_UNITS);
-    tx.unitPrice = unitLineItem.unitPrice;
+    normalizedTx.startDate = start;
+    normalizedTx.endDate = end;
+    normalizedTx.unitType = LINE_ITEM_UNITS;
+    const unitLineItem = normalizedTx.attributes.lineItems.find(l => l.code === LINE_ITEM_UNITS);
+    normalizedTx.unitPrice = unitLineItem.unitPrice;
   }
+  return normalizedTx;
 };
 
 const createVirtualMasterTransaction = (bookings) => {
   // calculate sum of quantity, booking start, booking end, totalPrice
-
-  normalizeTransactionForEstimate(bookings[0]);
+  const virtualBookings = cloneDeep(bookings);
+  virtualBookings[0] = normalizeTransactionForEstimate(virtualBookings[0]);
 
   const masterBooking = bookings.slice(1).reduce((masterTx, tx) => {
-    normalizeTransactionForEstimate(tx);
-    masterTx.quantity += tx.quantity;
-    masterTx.startDate = masterTx.startDate < tx.startDate ? masterTx.startDate : tx.startDate;
-    masterTx.endDate = masterTx.endDate > tx.endDate ? masterTx.endDate : tx.endDate;
+    const normalizedTx = normalizeTransactionForEstimate(tx);
+    masterTx.quantity += normalizedTx.quantity;
+    masterTx.startDate = masterTx.startDate < normalizedTx.startDate ? masterTx.startDate : normalizedTx.startDate;
+    masterTx.endDate = masterTx.endDate > normalizedTx.endDate ? masterTx.endDate : normalizedTx.endDate;
     return masterTx;
-  }, cloneDeep(bookings[0]));
+  }, cloneDeep(virtualBookings[0]));
 
   return masterBooking;
 };

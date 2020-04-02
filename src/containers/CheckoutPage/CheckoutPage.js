@@ -607,7 +607,7 @@ export class CheckoutPageComponent extends Component {
       ? currentListing.attributes.availabilityPlan.timezone
       : 'Etc/UTC';
 
-    const shouldShowBookingSummary = Array.isArray(tx);
+    const shouldShowBookingSummary = Array.isArray(tx) && tx.length > 1;
 
     const shouldShowBookingsToggle = tx.length >= 2;
 
@@ -625,7 +625,7 @@ export class CheckoutPageComponent extends Component {
           )
         }
         {
-          shouldShowBookingsDetails && (
+          shouldShowBookingsDetails && Array.isArray((txBooking)) && (
             <div className={shouldShowBookingsToggle && css.bookingDetailsContainer}>
               {
                 speculatedTransaction.map((tx, i) => {
@@ -663,15 +663,18 @@ export class CheckoutPageComponent extends Component {
           )
         }
         {!Array.isArray(tx) && tx.id && txBooking.id && (
-          <BookingBreakdown
-            className={css.bookingBreakdown}
-            userRole="customer"
-            unitType={config.bookingUnitType}
-            transaction={tx}
-            booking={txBooking}
-            dateType={DATE_TYPE_DATETIME}
-            timeZone={timeZone}
-          />
+          <div>
+            <h5 className={css.bookingDetailIndex}>Processing payment...</h5>
+            <BookingBreakdown
+              className={css.bookingBreakdown}
+              userRole="customer"
+              unitType={config.bookingUnitType}
+              transaction={tx}
+              booking={txBooking}
+              dateType={DATE_TYPE_DATETIME}
+              timeZone={timeZone}
+            />
+          </div>
         )}
       </React.Fragment>
     );

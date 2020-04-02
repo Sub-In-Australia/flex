@@ -74,7 +74,7 @@ const LineItemBookingPeriod = props => {
   // from actual start and end times used for availability reservation. It can help in situations
   // where there are preparation time needed between bookings.
   // Read more: https://www.sharetribe.com/api-reference/marketplace.html#bookings
-  console.log({ booking });
+
   const { start, end, displayStart, displayEnd } = booking.attributes;
   const localStartDate = displayStart || start;
   const localEndDateRaw = displayEnd || end;
