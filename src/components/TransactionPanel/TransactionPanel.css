@@ -480,3 +480,10 @@
   margin-top: 0;
   margin-bottom: 1px;
 }
+
+.errorMessage {
+  display: flex;
+  justify-content: center;
+  color: var(--failColor);
+  font-size: 16px;
+}

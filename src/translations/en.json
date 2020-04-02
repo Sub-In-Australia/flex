@@ -1247,5 +1247,7 @@
   "UserNav.newListing": "Offer Childcare Services",
   "UserNav.editListing": "Edit Childcare Services",
   "UserNav.profileSettingsPage": "Edit user profile",
-  "UserNav.contactDetailsPage": "Account settings"
+  "UserNav.contactDetailsPage": "Account settings",
+  "TransactionPanel.cancelButton": "Cancel",
+  "TransactionPanel.cancelFailMessage": "Oops, canceling failed. Please try again."
 }

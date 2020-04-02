@@ -51,6 +51,7 @@ import PanelHeading, {
 } from './PanelHeading';
 
 import css from './TransactionPanel.css';
+import { SecondaryButton } from '../Button/Button';
 
 // Helper function to get display names for different roles
 const displayNames = (currentUser, currentProvider, currentCustomer, intl) => {
@@ -191,6 +192,9 @@ export class TransactionPanelComponent extends Component {
       onSubmitBookingRequest,
       monthlyTimeSlots,
       nextTransitions,
+      onCancelSale,
+      cancelInProgress,
+      cancelSaleError,
     } = this.props;
 
     const currentTransaction = ensureTransaction(transaction);
@@ -301,6 +305,8 @@ export class TransactionPanelComponent extends Component {
     const firstImage =
       currentListing.images && currentListing.images.length > 0 ? currentListing.images[0] : null;
 
+    const showCancelButtons = txIsAccepted(currentTransaction);
+
     const saleButtons = (
       <SaleActionButtonsMaybe
         showButtons={stateData.showSaleButtons}
@@ -312,6 +318,25 @@ export class TransactionPanelComponent extends Component {
         onDeclineSale={() => onDeclineSale(currentTransaction.id)}
       />
     );
+
+    const cancelSaleErrorMess = cancelSaleError ? <FormattedMessage id="TransactionPanel.cancelFailMessage" /> : null;
+
+    const cancelButton = (
+      <div className={css.actionButtons}>
+        <div className={css.errorMessage}>
+          {cancelSaleErrorMess}
+        </div>
+        <div className={css.actionButtonWrapper}>
+          <SecondaryButton
+            inProgress={cancelInProgress}
+            disabled={cancelInProgress}
+            onClick={() => onCancelSale({transactionId: currentTransaction.id, isProvider})}
+          >
+            <FormattedMessage id="TransactionPanel.cancelButton" />
+          </SecondaryButton>
+        </div>
+      </div>
+    )
 
     const showSendMessageForm =
       !isCustomerBanned && !isCustomerDeleted && !isProviderBanned && !isProviderDeleted;
@@ -413,6 +438,11 @@ export class TransactionPanelComponent extends Component {
             {stateData.showSaleButtons ? (
               <div className={css.mobileActionButtons}>{saleButtons}</div>
             ) : null}
+
+            {showCancelButtons ? (
+              <div className={css.mobileActionButtons}>{cancelButton}</div>
+            ) : null}
+
           </div>
 
           <div className={css.asideDesktop}>
@@ -458,6 +488,10 @@ export class TransactionPanelComponent extends Component {
 
               {stateData.showSaleButtons ? (
                 <div className={css.desktopActionButtons}>{saleButtons}</div>
+              ) : null}
+
+              {showCancelButtons ? (
+                <div className={css.desktopActionButtons}>{cancelButton}</div>
               ) : null}
             </div>
           </div>

@@ -11,6 +11,8 @@ import {
   txIsInFirstReviewBy,
   TRANSITION_ACCEPT,
   TRANSITION_DECLINE,
+  TRANSITION_CANCEL_BY_PROVIDER,
+  TRANSITION_CANCEL_BY_CUSTOMER,
 } from '../../util/transaction';
 import * as log from '../../util/log';
 import {
@@ -63,6 +65,10 @@ export const FETCH_TIME_SLOTS_REQUEST = 'app/TransactionPage/FETCH_TIME_SLOTS_RE
 export const FETCH_TIME_SLOTS_SUCCESS = 'app/TransactionPage/FETCH_TIME_SLOTS_SUCCESS';
 export const FETCH_TIME_SLOTS_ERROR = 'app/TransactionPage/FETCH_TIME_SLOTS_ERROR';
 
+export const CANCEL_SALE_REQUEST = 'app/TransactionPage/CANCEL_SALE_REQUEST';
+export const CANCEL_SALE_SUCCESS = 'app/TransactionPage/CANCEL_SALE_SUCCESS';
+export const CANCEL_SALE_ERROR = 'app/TransactionPage/CANCEL_SALE_ERROR';
+
 // ================ Reducer ================ //
 
 const initialState = {
@@ -95,6 +101,8 @@ const initialState = {
   fetchTransitionsInProgress: false,
   fetchTransitionsError: null,
   processTransitions: null,
+  cancelInProgress: false,
+  cancelSaleError: null,
 };
 
 // Merge entity arrays using ids, so that conflicting items in newer array (b) overwrite old values (a).
@@ -136,6 +144,13 @@ export default function checkoutPageReducer(state = initialState, action = {}) {
       return { ...state, acceptInProgress: false };
     case ACCEPT_SALE_ERROR:
       return { ...state, acceptInProgress: false, acceptSaleError: payload };
+
+    case CANCEL_SALE_REQUEST:
+      return { ...state, cancelInProgress: true, cancelSaleError: null };
+    case ACCEPT_SALE_SUCCESS:
+      return { ...state, cancelInProgress: false };
+    case CANCEL_SALE_ERROR:
+      return { ...state, cancelInProgress: false, cancelSaleError: payload };
 
     case DECLINE_SALE_REQUEST:
       return { ...state, declineInProgress: true, declineSaleError: null, acceptSaleError: null };
@@ -271,6 +286,10 @@ const sendMessageError = e => ({ type: SEND_MESSAGE_ERROR, error: true, payload:
 const sendReviewRequest = () => ({ type: SEND_REVIEW_REQUEST });
 const sendReviewSuccess = () => ({ type: SEND_REVIEW_SUCCESS });
 const sendReviewError = e => ({ type: SEND_REVIEW_ERROR, error: true, payload: e });
+
+const cancelSaleRequest = () => ({ type: CANCEL_SALE_REQUEST });
+const cancelSaleSuccess = () => ({ type: CANCEL_SALE_SUCCESS });
+const cancelSaleError = e => ({ type: CANCEL_SALE_ERROR, error: true, payload: e });
 
 export const fetchTimeSlotsRequest = monthId => ({
   type: FETCH_TIME_SLOTS_REQUEST,
@@ -454,6 +473,33 @@ export const declineSale = id => (dispatch, getState, sdk) => {
       log.error(e, 'reject-sale-failed', {
         txId: id,
         transition: TRANSITION_DECLINE,
+      });
+      throw e;
+    });
+};
+
+export const cancelSale = params => (dispatch, getState, sdk) => {
+  if (acceptOrDeclineInProgress(getState())) {
+    return Promise.reject(new Error('Accept or decline already in progress'));
+  }
+  dispatch(cancelSaleRequest());
+
+  const { transactionId , isProvider } = params;
+  const nextTransition = isProvider ? TRANSITION_CANCEL_BY_PROVIDER : TRANSITION_CANCEL_BY_CUSTOMER;
+
+  return sdk.transactions
+    .transition({ id: transactionId, transition: nextTransition, params: {} }, { expand: true })
+    .then(response => {
+      dispatch(addMarketplaceEntities(response));
+      dispatch(cancelSaleSuccess());
+      dispatch(fetchCurrentUserNotifications());
+      return response;
+    })
+    .catch(e => {
+      dispatch(cancelSaleError(storableError(e)));
+      log.error(e, 'reject-sale-failed', {
+        txId: transactionId,
+        transition: nextTransition,
       });
       throw e;
     });

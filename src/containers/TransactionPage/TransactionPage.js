@@ -36,6 +36,7 @@ import {
   sendReview,
   fetchMoreMessages,
   fetchTimeSlots,
+  cancelSale,
 } from './TransactionPage.duck';
 import css from './TransactionPage.css';
 
@@ -79,6 +80,9 @@ export const TransactionPageComponent = props => {
     processTransitions,
     callSetInitialValues,
     onInitializeCardPaymentData,
+    cancelInProgress,
+    cancelSaleError,
+    onCancelSale,
   } = props;
 
   const currentTransaction = ensureTransaction(transaction);
@@ -251,6 +255,9 @@ export const TransactionPageComponent = props => {
       nextTransitions={processTransitions}
       onSubmitBookingRequest={handleSubmitBookingRequest}
       monthlyTimeSlots={monthlyTimeSlots}
+      onCancelSale={onCancelSale}
+      cancelInProgress={cancelInProgress}
+      cancelSaleError={cancelSaleError}
     />
   ) : (
     loadingOrFailedFetching
@@ -358,6 +365,8 @@ const mapStateToProps = state => {
     sendReviewError,
     monthlyTimeSlots,
     processTransitions,
+    cancelInProgress,
+    cancelSaleError,
   } = state.TransactionPage;
   const { currentUser } = state.user;
 
@@ -386,6 +395,8 @@ const mapStateToProps = state => {
     sendReviewError,
     monthlyTimeSlots,
     processTransitions,
+    cancelInProgress,
+    cancelSaleError,
   };
 };
 
@@ -403,6 +414,7 @@ const mapDispatchToProps = dispatch => {
     onInitializeCardPaymentData: () => dispatch(initializeCardPaymentData()),
     onFetchTimeSlots: (listingId, start, end, timeZone) =>
       dispatch(fetchTimeSlots(listingId, start, end, timeZone)),
+    onCancelSale: (params) => dispatch(cancelSale(params)),
   };
 };
 
