@@ -18,7 +18,7 @@ const ListingCard = props => {
   const { title, price } = listing.attributes;
   const formattedPrice =
     price && price.currency === config.currency ? formatMoney(intl, price) : price.currency;
-  const firstImage = listing.images && listing.images.length > 0 ? listing.images[0] : null;
+  const firstImage = listing.images && listing.images.length > 1 ? listing.images[1] : null;
 
   // listing card anchor needs sometimes inherited border radius.
   const classes = classNames(

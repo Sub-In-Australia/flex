@@ -180,7 +180,9 @@ export class AuthenticationPageComponent extends Component {
     };
 
     const formContent = (
-      <div className={css.content}>
+      <div className={classNames(css.content, {
+        [css.signupContent]: !isLogin
+      })}>
         <LinkTabNavHorizontal className={css.tabs} tabs={tabs} />
         {loginOrSignupError}
         {isLogin ? (

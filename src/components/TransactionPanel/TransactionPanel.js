@@ -299,7 +299,7 @@ export class TransactionPanelComponent extends Component {
       : '';
 
     const firstImage =
-      currentListing.images && currentListing.images.length > 0 ? currentListing.images[0] : null;
+      currentListing.images && currentListing.images.length > 1 ? currentListing.images[1] : null;
 
     const saleButtons = (
       <SaleActionButtonsMaybe
