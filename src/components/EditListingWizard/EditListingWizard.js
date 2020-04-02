@@ -91,14 +91,32 @@ const tabCompleted = (tab, listing) => {
     price,
     title,
     publicData,
+    privateData,
   } = listing.attributes;
   const images = listing.images;
 
+  const {
+    age, overseasLastMonth, contactAnyCovid19Case,
+    covidSymptomsLastMonth, contactWithHealthcarePro,
+    considerYourselfHealthy, firstAidCertificate
+  } = publicData || {};
+
+  const {
+    childrenCheckID,
+    organisationalReferenceContactName,
+    organisationalReferenceContactNumber,
+    personalReferenceContactName,
+    personalReferenceContactNumber
+  } = privateData || {};
+
   switch (tab) {
     case DESCRIPTION:
-      return !!(description && title);
+      return !!(title && age && overseasLastMonth && contactAnyCovid19Case &&
+        covidSymptomsLastMonth && contactWithHealthcarePro && considerYourselfHealthy);
     case FEATURES:
-      return !!(publicData && publicData.yogaStyles);
+      return !!(firstAidCertificate && childrenCheckID &&
+        organisationalReferenceContactName && organisationalReferenceContactNumber &&
+        personalReferenceContactName && personalReferenceContactNumber);
     case POLICY:
       return !!(publicData && typeof publicData.rules !== 'undefined');
     case LOCATION:

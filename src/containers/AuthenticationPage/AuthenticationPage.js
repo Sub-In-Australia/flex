@@ -188,6 +188,7 @@ export class AuthenticationPageComponent extends Component {
           <LoginForm className={css.form} onSubmit={submitLogin} inProgress={authInProgress} />
         ) : (
             <SignupForm
+              loginOrSignupError={loginOrSignupError}
               className={css.form}
               onSubmit={handleSubmitSignup}
               inProgress={authInProgress}

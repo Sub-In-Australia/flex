@@ -99,6 +99,8 @@ const EditListingWizardTab = props => {
     intl,
     fetchExceptionsInProgress,
     availabilityExceptions,
+    onCoverUpload,
+    cover,
   } = props;
 
   const { type } = params;
@@ -273,9 +275,22 @@ const EditListingWizardTab = props => {
           onImageUpload={onImageUpload}
           onRemoveImage={onRemoveImage}
           onSubmit={values => {
-            onCompleteEditListingWizardTab(tab, values);
+            const { cover, images } = values;
+            if (!cover) {
+              onCompleteEditListingWizardTab(tab, {});
+            } else {
+              const isCoverChange = !!(cover.imageId);
+              if (isCoverChange) {
+                onCompleteEditListingWizardTab(tab, { images: [cover, ...images], publicData: { cover: JSON.stringify(cover.imageId) } });
+              }
+              else {
+                onCompleteEditListingWizardTab(tab, { images: [{ imageId: cover.id }, ...images] });
+              }
+            }
           }}
           onUpdateImageOrder={onUpdateImageOrder}
+          onCoverUpload={onCoverUpload}
+          cover={cover}
         />
       );
     }

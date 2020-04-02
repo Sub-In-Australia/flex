@@ -37,6 +37,7 @@ import {
   loadData,
   clearUpdatedTab,
   savePayoutDetails,
+  requestCoverUpload,
 } from './EditListingPage.duck';
 
 import css from './EditListingPage.css';
@@ -84,6 +85,7 @@ export const EditListingPageComponent = props => {
     stripeAccountFetched,
     stripeAccount,
     updateStripeAccountError,
+    onCoverUpload,
   } = props;
 
   const { id, type, returnURLType } = params;
@@ -112,20 +114,20 @@ export const EditListingPageComponent = props => {
 
     const redirectProps = isPendingApproval
       ? {
-          name: 'ListingPageVariant',
-          params: {
-            id: listingId.uuid,
-            slug: listingSlug,
-            variant: LISTING_PAGE_PENDING_APPROVAL_VARIANT,
-          },
-        }
+        name: 'ListingPageVariant',
+        params: {
+          id: listingId.uuid,
+          slug: listingSlug,
+          variant: LISTING_PAGE_PENDING_APPROVAL_VARIANT,
+        },
+      }
       : {
-          name: 'ListingPage',
-          params: {
-            id: listingId.uuid,
-            slug: listingSlug,
-          },
-        };
+        name: 'ListingPage',
+        params: {
+          id: listingId.uuid,
+          slug: listingSlug,
+        },
+      };
 
     return <NamedRedirect {...redirectProps} />;
   } else if (allowOnlyOneListing && isNewURI && currentUserListingFetched && currentUserListing) {
@@ -174,11 +176,17 @@ export const EditListingPageComponent = props => {
     const currentListingImages =
       currentListing && currentListing.images ? currentListing.images : [];
 
+    const useLocalCover = page.useLocalCover;
+    const tempCover = useLocalCover ? page.cover : currentListing.attributes.publicData && currentListing.attributes.publicData.cover ? JSON.parse(currentListing.attributes.publicData.cover) : null;
+
+    const cover = tempCover && tempCover.uuid ? currentListingImages.find(img => img.id.uuid === tempCover.uuid) : tempCover;
+
+    // Images not yet connected to the listing
     // Images not yet connected to the listing
     const imageOrder = page.imageOrder || [];
     const unattachedImages = imageOrder.map(i => page.images[i]);
 
-    const allImages = currentListingImages.concat(unattachedImages);
+    const allImages = cover ? currentListingImages.slice(1).concat(unattachedImages) : currentListingImages.concat(unattachedImages);
     const removedImageIds = page.removedImageIds || [];
     const images = allImages.filter(img => {
       return !removedImageIds.includes(img.id);
@@ -239,6 +247,8 @@ export const EditListingPageComponent = props => {
             createStripeAccountError || updateStripeAccountError || fetchStripeAccountError
           }
           stripeAccountLinkError={getAccountLinkError}
+          cover={cover}
+          onCoverUpload={onCoverUpload}
         />
         <Footer />
       </Page>
@@ -390,6 +400,7 @@ const mapDispatchToProps = dispatch => ({
   onUpdateImageOrder: imageOrder => dispatch(updateImageOrder(imageOrder)),
   onRemoveListingImage: imageId => dispatch(removeListingImage(imageId)),
   onChange: () => dispatch(clearUpdatedTab()),
+  onCoverUpload: data => dispatch(requestCoverUpload(data)),
 });
 
 // Note: it is important that the withRouter HOC is **outside** the

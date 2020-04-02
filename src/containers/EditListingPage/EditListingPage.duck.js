@@ -65,6 +65,12 @@ export const SAVE_PAYOUT_DETAILS_REQUEST = 'app/EditListingPage/SAVE_PAYOUT_DETA
 export const SAVE_PAYOUT_DETAILS_SUCCESS = 'app/EditListingPage/SAVE_PAYOUT_DETAILS_SUCCESS';
 export const SAVE_PAYOUT_DETAILS_ERROR = 'app/EditListingPage/SAVE_PAYOUT_DETAILS_ERROR';
 
+export const UPLOAD_COVER_REQUEST = 'app/EditListingPage/UPLOAD_COVER_REQUEST';
+export const UPLOAD_COVER_SUCCESS = 'app/EditListingPage/UPLOAD_COVER_SUCCESS';
+export const UPLOAD_COVER_ERROR = 'app/EditListingPage/UPLOAD_COVER_ERROR';
+
+export const REMOVE_COVER_IMAGE = 'app/EditListingPage/REMOVE_COVER_IMAGE';
+
 // ================ Reducer ================ //
 
 const initialState = {
@@ -93,6 +99,10 @@ const initialState = {
   updateInProgress: false,
   payoutDetailsSaveInProgress: false,
   payoutDetailsSaved: false,
+  cover: null,
+  deleteCover: false,
+  uploadCoverInProgress: false,
+  useLocalCover: false
 };
 
 export default function reducer(state = initialState, action = {}) {
@@ -292,6 +302,24 @@ export default function reducer(state = initialState, action = {}) {
     case SAVE_PAYOUT_DETAILS_SUCCESS:
       return { ...state, payoutDetailsSaveInProgress: false, payoutDetailsSaved: true };
 
+    case UPLOAD_COVER_REQUEST: {
+      return {
+        ...state, cover: { ...payload.params }, uploadCoverInProgress: true, deleteCover: false, useLocalCover: true
+      }
+    };
+    case UPLOAD_COVER_SUCCESS: {
+      const { id, imageId } = payload;
+      const file = state.cover.file;
+      return {
+        ...state, cover: { id, imageId, file }, uploadCoverInProgress: false
+      }
+    }
+    case UPLOAD_COVER_ERROR: {
+      return {
+        ...state, cover: null, uploadImageError: payload.error
+      }
+    }
+
     default:
       return state;
   }
@@ -368,6 +396,10 @@ export const savePayoutDetailsRequest = requestAction(SAVE_PAYOUT_DETAILS_REQUES
 export const savePayoutDetailsSuccess = successAction(SAVE_PAYOUT_DETAILS_SUCCESS);
 export const savePayoutDetailsError = errorAction(SAVE_PAYOUT_DETAILS_ERROR);
 
+export const uploadCoverImage = requestAction(UPLOAD_COVER_REQUEST);
+export const uploadCoverImageSuccess = successAction(UPLOAD_COVER_SUCCESS);
+export const uploadCoverImageError = errorAction(UPLOAD_COVER_ERROR);
+
 // ================ Thunk ================ //
 
 export function requestShowListing(actionPayload) {
@@ -440,6 +472,17 @@ export function requestImageUpload(actionPayload) {
       .upload({ image: actionPayload.file })
       .then(resp => dispatch(uploadImageSuccess({ data: { id, imageId: resp.data.data.id } })))
       .catch(e => dispatch(uploadImageError({ id, error: storableError(e) })));
+  };
+}
+
+export function requestCoverUpload(actionPayload) {
+  return (dispatch, getState, sdk) => {
+    const id = actionPayload.id;
+    dispatch(uploadCoverImage(actionPayload));
+    return sdk.images
+      .upload({ image: actionPayload.file })
+      .then(resp => dispatch(uploadCoverImageSuccess({ data: { id, imageId: resp.data.data.id } })))
+      .catch(e => dispatch(uploadCoverImageError({ id, error: storableError(e) })));
   };
 }
 

@@ -42,22 +42,39 @@ const EditListingDescriptionPanel = props => {
       }}
     />
   ) : (
-    <FormattedMessage id="EditListingDescriptionPanel.createListingTitle" />
-  );
+      <FormattedMessage id="EditListingDescriptionPanel.createListingTitle" />
+    );
+
+  const {
+    age, overseasLastMonth, contactAnyCovid19Case,
+    covidSymptomsLastMonth, contactWithHealthcarePro,
+    considerYourselfHealthy,
+  } = publicData || {};
 
   return (
     <div className={classes}>
       <h1 className={css.title}>{panelTitle}</h1>
       <EditListingDescriptionForm
         className={css.form}
-        initialValues={{ title, description, certificate: publicData.certificate }}
+        initialValues={{
+          title, age, overseasLastMonth, contactAnyCovid19Case,
+          covidSymptomsLastMonth, contactWithHealthcarePro,
+          considerYourselfHealthy,
+        }}
         saveActionMsg={submitButtonText}
         onSubmit={values => {
-          const { title, description, certificate } = values;
+          const { title, description, age,
+            overseasLastMonth, contactAnyCovid19Case,
+            covidSymptomsLastMonth, contactWithHealthcarePro,
+            considerYourselfHealthy,
+          } = values;
           const updateValues = {
             title: title.trim(),
             description,
-            publicData: { certificate },
+            publicData: { 
+              age, overseasLastMonth, contactAnyCovid19Case,
+              covidSymptomsLastMonth, contactWithHealthcarePro,
+              considerYourselfHealthy },
           };
 
           onSubmit(updateValues);

@@ -29,7 +29,7 @@ const EditListingFeaturesPanel = props => {
 
   const classes = classNames(rootClassName || css.root, className);
   const currentListing = ensureListing(listing);
-  const { publicData } = currentListing.attributes;
+  const { publicData, privateData } = currentListing.attributes;
 
   const isPublished = currentListing.id && currentListing.attributes.state !== LISTING_STATE_DRAFT;
   const panelTitle = isPublished ? (
@@ -44,11 +44,29 @@ const EditListingFeaturesPanel = props => {
       }}
     />
   ) : (
-    <FormattedMessage id="EditListingFeaturesPanel.createListingTitle" />
-  );
+      <FormattedMessage id="EditListingFeaturesPanel.createListingTitle" />
+    );
 
-  const yogaStyles = publicData && publicData.yogaStyles;
-  const initialValues = { yogaStyles };
+  const {
+    childrenCheckID,
+    organisationalReferenceContactName,
+    organisationalReferenceContactNumber,
+    personalReferenceContactName,
+    personalReferenceContactNumber
+  } = privateData || {};
+  const {
+    firstAidCertificate,
+    childrenCardValidation,
+    referenceChecksComplete
+  } = publicData || {};
+
+  const initialValues = {
+    childrenCheckID, firstAidCertificate,
+    organisationalReferenceContactName,
+    organisationalReferenceContactNumber,
+    personalReferenceContactName,
+    personalReferenceContactNumber
+  };
 
   return (
     <div className={classes}>
@@ -58,10 +76,27 @@ const EditListingFeaturesPanel = props => {
         name={FEATURES_NAME}
         initialValues={initialValues}
         onSubmit={values => {
-          const { yogaStyles = [] } = values;
+          const {
+            childrenCheckID, firstAidCertificate,
+            organisationalReferenceContactName,
+            organisationalReferenceContactNumber,
+            personalReferenceContactName,
+            personalReferenceContactNumber
+          } = values;
 
           const updatedValues = {
-            publicData: { yogaStyles },
+            publicData: {
+              firstAidCertificate,
+              childrenCardValidation: childrenCardValidation || "Not Validated",
+              referenceChecksComplete: referenceChecksComplete || 'Not Started',
+            },
+            privateData: {
+              childrenCheckID,
+              organisationalReferenceContactName,
+              organisationalReferenceContactNumber,
+              personalReferenceContactName,
+              personalReferenceContactNumber
+            }
           };
           onSubmit(updatedValues);
         }}
