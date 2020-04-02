@@ -1,4 +1,6 @@
 import React from 'react';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 import { string } from 'prop-types';
 import { FormattedMessage, injectIntl, intlShape } from '../../util/reactIntl';
 import classNames from 'classnames';
@@ -14,6 +16,8 @@ import {
 } from '../../components';
 
 import css from './Footer.css';
+import { ensureCurrentUser } from '../../util/data';
+import { ACCOUNT_TYPE_CHILDCARE_WORKER } from '../../util/types';
 
 const renderSocialMediaLinks = intl => {
   const { siteFacebookPage, siteInstagramPage, siteTwitterHandle } = config;
@@ -54,8 +58,13 @@ const renderSocialMediaLinks = intl => {
 };
 
 const Footer = props => {
-  const { rootClassName, className, intl } = props;
+  const { rootClassName, className, intl, currentUser } = props;
   const socialMediaLinks = renderSocialMediaLinks(intl);
+
+  const ensuredCurrentUser = ensureCurrentUser(currentUser);
+  const isChildcareWorker = ensuredCurrentUser.attributes.profile.publicData
+    && ensuredCurrentUser.attributes.profile.publicData.accountType === ACCOUNT_TYPE_CHILDCARE_WORKER
+
   const classes = classNames(rootClassName || css.root, className);
 
   return (
@@ -67,7 +76,7 @@ const Footer = props => {
             <div className={css.organization} id="organization">
               <NamedLink name="LandingPage" className={css.logoLink}>
                 <span>
-                  <Logo format="desktop" className={css.logo}/>
+                  <Logo format="desktop" className={css.logo} />
                 </span>
               </NamedLink>
               <div className={css.organizationInfo}>
@@ -83,11 +92,13 @@ const Footer = props => {
             </div>
             <div className={css.infoLinks}>
               <ul className={css.list}>
-                <li className={css.listItem}>
-                  <NamedLink name="NewListingPage" className={css.link}>
-                    <FormattedMessage id="Footer.toNewListingPage" />
-                  </NamedLink>
-                </li>
+                {isChildcareWorker &&
+                  <li className={css.listItem}>
+                    <NamedLink name="NewListingPage" className={css.link}>
+                      <FormattedMessage id="Footer.toNewListingPage" />
+                    </NamedLink>
+                  </li>
+                }
                 <li className={css.listItem}>
                   <NamedLink name="AboutPage" className={css.link}>
                     <FormattedMessage id="Footer.toAboutPage" />
@@ -262,4 +273,19 @@ Footer.propTypes = {
   intl: intlShape.isRequired,
 };
 
-export default injectIntl(Footer);
+const mapStateToProps = state => {
+  const {
+    currentUser
+  } = state.user;
+
+  return {
+    currentUser
+  };
+}
+
+export default compose(
+  connect(
+    mapStateToProps
+  ),
+  injectIntl
+)(Footer);
