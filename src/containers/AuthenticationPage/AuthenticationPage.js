@@ -138,13 +138,13 @@ export class AuthenticationPageComponent extends Component {
         phoneNumber,
 
         //For Childcare worker (Provider)
-        wwvpRegistrationNumber, workingWithChildrenCheck,
-        vitRegistrationNumber, expiryDate, stateOfIssue,
+        // wwvpRegistrationNumber, workingWithChildrenCheck,
+        // vitRegistrationNumber, expiryDate, stateOfIssue,
 
         //For Medical worker (Customer)
         healthcareWorkerIdentifier, highRiskWithCovid19,
-        professionPosition, healthcareRegistrationNumber,
-        linkedIn, workingLocation,
+        // professionPosition, healthcareRegistrationNumber,
+        // linkedIn, workingLocation,
 
         ...rest
       } = values;
@@ -158,22 +158,21 @@ export class AuthenticationPageComponent extends Component {
         } : {
             accountType,
 
-            professionPosition, linkedIn, workingLocation,
+            // professionPosition, linkedIn, workingLocation,
             highRiskWithCovid19,
           },
         privateData: isChildcareWorker ? {
           iReadTheTos, referenceCheck, ableToSupplyVerificationOfIC,
           phoneNumber, 
           
-          wwvpRegistrationNumber, workingWithChildrenCheck,
-          vitRegistrationNumber, expiryDate, stateOfIssue,
+          // wwvpRegistrationNumber, workingWithChildrenCheck,
+          // vitRegistrationNumber, expiryDate, stateOfIssue,
         } : {
           iReadTheTos, referenceCheck, ableToSupplyVerificationOfIC, 
           phoneNumber,
 
           healthcareWorkerIdentifier,
-          healthcareRegistrationNumber,
-
+          // healthcareRegistrationNumber,
         },
         ...rest
       };

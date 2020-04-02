@@ -415,7 +415,7 @@ const SignupFormComponent = props => (
             validate={phoneNumberRequired}
           />
 
-          <Condition when="accountType" is={ACCOUNT_TYPE_CHILDCARE_WORKER}>
+          {/* <Condition when="accountType" is={ACCOUNT_TYPE_CHILDCARE_WORKER}>
             <FieldTextInput
               className={css.generalField}
               type="text"
@@ -460,7 +460,7 @@ const SignupFormComponent = props => (
               placeholder={stateOfIssuePlaceholder}
               validate={stateOfIssueRequired}
             />
-          </Condition>
+          </Condition> */}
 
           <Condition when="accountType" is={ACCOUNT_TYPE_MEDICAL_WORKER}>
             <FieldTextInput
@@ -483,7 +483,7 @@ const SignupFormComponent = props => (
                 <option key={type.key} value={type.key}>{intl.formatMessage({ id: type.labelId })}</option>
               ))}
             </FieldSelect>
-            <FieldTextInput
+            {/* <FieldTextInput
               className={css.generalField}
               type="text"
               id={formId ? `${formId}.professionPosition` : 'professionPosition'}
@@ -517,7 +517,7 @@ const SignupFormComponent = props => (
               label={workingLocationLabel}
               placeholder={workingLocationPlaceholder}
               validate={workingLocationRequired}
-            />
+            /> */}
           </Condition>
 
           {loginOrSignupError}

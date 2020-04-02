@@ -52,11 +52,26 @@ export class ProfileSettingsPageComponent extends Component {
     const profileImage = image || { imageId: profileImageId };
     const {
       accountType,
-      seekingOrProviding,
 
-      professionPosition, linkedIn, workingLocation,
+      // professionPosition, linkedIn, workingLocation,
       highRiskWithCovid19,
     } = publicData || {};
+
+    const {
+      iReadTheTos, referenceCheck, ableToSupplyVerificationOfIC,
+      phoneNumber,
+
+      //For Childcare worker (Provider)
+      // wwvpRegistrationNumber, workingWithChildrenCheck,
+      // vitRegistrationNumber, expiryDate, stateOfIssue,
+
+      //For Medical worker (Customer)
+      healthcareWorkerIdentifier,
+      // healthcareRegistrationNumber,
+
+    } = privateData || {};
+
+    const isChildcareWorker = accountType === ACCOUNT_TYPE_CHILDCARE_WORKER;
 
     const handleSubmit = values => {
       const { firstName, lastName, bio: rawBio,
@@ -66,13 +81,13 @@ export class ProfileSettingsPageComponent extends Component {
         phoneNumber,
 
         //For Childcare worker (Provider)
-        wwvpRegistrationNumber, workingWithChildrenCheck,
-        vitRegistrationNumber, expiryDate, stateOfIssue,
+        // wwvpRegistrationNumber, workingWithChildrenCheck,
+        // vitRegistrationNumber, expiryDate, stateOfIssue,
 
         //For Medical worker (Customer)
         healthcareWorkerIdentifier, highRiskWithCovid19,
-        professionPosition, healthcareRegistrationNumber,
-        linkedIn, workingLocation,
+        // professionPosition, healthcareRegistrationNumber,
+        // linkedIn, workingLocation,
       } = values;
       const isChildcareWorker = accountType === ACCOUNT_TYPE_CHILDCARE_WORKER;
 
@@ -87,21 +102,21 @@ export class ProfileSettingsPageComponent extends Component {
         publicData: isChildcareWorker ? {
           
         } : {
-            professionPosition, linkedIn, workingLocation,
+            // professionPosition, linkedIn, workingLocation,
             highRiskWithCovid19,
           },
         privateData: isChildcareWorker ? {
           iReadTheTos, referenceCheck, ableToSupplyVerificationOfIC,
           phoneNumber,
 
-          wwvpRegistrationNumber, workingWithChildrenCheck,
-          vitRegistrationNumber, expiryDate, stateOfIssue,
+          // wwvpRegistrationNumber, workingWithChildrenCheck,
+          // vitRegistrationNumber, expiryDate, stateOfIssue,
         } : {
             iReadTheTos, referenceCheck, ableToSupplyVerificationOfIC,
             phoneNumber,
 
             healthcareWorkerIdentifier,
-            healthcareRegistrationNumber,
+            // healthcareRegistrationNumber,
           },
       };
       const uploadedImage = this.props.image;
@@ -115,28 +130,13 @@ export class ProfileSettingsPageComponent extends Component {
       onUpdateProfile(updatedValues);
     };
 
-    const {
-      iReadTheTos, referenceCheck, ableToSupplyVerificationOfIC,
-      phoneNumber,
-
-      //For Childcare worker (Provider)
-      wwvpRegistrationNumber, workingWithChildrenCheck,
-      vitRegistrationNumber, expiryDate, stateOfIssue,
-
-      //For Medical worker (Customer)
-      healthcareWorkerIdentifier,
-      healthcareRegistrationNumber,
-
-    } = privateData || {};
-
-    const isChildcareWorker = accountType === ACCOUNT_TYPE_CHILDCARE_WORKER;
     const initialValuesSpecial = isChildcareWorker ? {
-      wwvpRegistrationNumber, workingWithChildrenCheck,
-      vitRegistrationNumber, expiryDate, stateOfIssue,
+      // wwvpRegistrationNumber, workingWithChildrenCheck,
+      // vitRegistrationNumber, expiryDate, stateOfIssue,
     } : {
-        professionPosition, linkedIn, workingLocation,
+        // professionPosition, linkedIn, workingLocation,
+        // healthcareRegistrationNumber,
         healthcareWorkerIdentifier, highRiskWithCovid19,
-        healthcareRegistrationNumber,
       }
 
     const profileSettingsForm = user.id ? (
