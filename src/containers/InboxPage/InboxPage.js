@@ -19,6 +19,7 @@ import { createSlug, stringify } from '../../util/urlHelpers';
 import { ensureCurrentUser, ensureListing } from '../../util/data';
 import { getMarketplaceEntities } from '../../ducks/marketplaceData.duck';
 import { isScrollingDisabled } from '../../ducks/UI.duck';
+import { groupTransactions } from './InboxPage.helper';
 import {
   Avatar,
   BookingTimeInfo,
@@ -383,6 +384,8 @@ export const InboxPageComponent = props => {
     },
   ];
   const nav = <TabNav rootClassName={css.tabs} tabRootClassName={css.tab} tabs={tabs} />;
+
+  const transactionGroups = groupTransactions(transactions);
 
   return (
     <Page title={title} scrollingDisabled={scrollingDisabled}>
