@@ -2,14 +2,20 @@ import React from 'react';
 import { bool, string } from 'prop-types';
 import classNames from 'classnames';
 import { FormattedMessage } from '../../util/reactIntl';
-import { propTypes } from '../../util/types';
+import { propTypes, ACCOUNT_TYPE_CHILDCARE_WORKER } from '../../util/types';
 import { OwnListingLink } from '../../components';
 
 import css from './SectionHowItWorks.css';
+import { ensureCurrentUser } from '../../util/data';
 
 const SectionHowItWorks = props => {
-  const { rootClassName, className, currentUserListing, currentUserListingFetched } = props;
+  const { rootClassName, className, currentUser, currentUserListing,
+    currentUserListingFetched
+  } = props;
 
+  const ensuredCurrentUser = ensureCurrentUser(currentUser);
+  const isChildcareWorker = ensuredCurrentUser.attributes.profile.publicData
+    && ensuredCurrentUser.attributes.profile.publicData.accountType === ACCOUNT_TYPE_CHILDCARE_WORKER;
   const classes = classNames(rootClassName || css.root, className);
   return (
     <div className={classes}>
@@ -47,11 +53,13 @@ const SectionHowItWorks = props => {
           </p>
         </div>
       </div>
-      <div className={css.createListingLink}>
-        <OwnListingLink listing={currentUserListing} listingFetched={currentUserListingFetched}>
-          <FormattedMessage id="SectionHowItWorks.createListingLink" />
-        </OwnListingLink>
-      </div>
+      {isChildcareWorker &&
+        <div className={css.createListingLink}>
+          <OwnListingLink listing={currentUserListing} listingFetched={currentUserListingFetched}>
+            <FormattedMessage id="SectionHowItWorks.createListingLink" />
+          </OwnListingLink>
+        </div>
+      }
     </div>
   );
 };

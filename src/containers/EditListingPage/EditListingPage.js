@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { bool, func, object, shape, string, oneOf } from 'prop-types';
 import { compose } from 'redux';
 import { withRouter } from 'react-router-dom';
@@ -13,8 +13,8 @@ import {
   LISTING_PAGE_PENDING_APPROVAL_VARIANT,
   createSlug,
 } from '../../util/urlHelpers';
-import { LISTING_STATE_DRAFT, LISTING_STATE_PENDING_APPROVAL, propTypes } from '../../util/types';
-import { ensureOwnListing } from '../../util/data';
+import { LISTING_STATE_DRAFT, LISTING_STATE_PENDING_APPROVAL, propTypes, ACCOUNT_TYPE_CHILDCARE_WORKER } from '../../util/types';
+import { ensureOwnListing, ensureCurrentUser } from '../../util/data';
 import { getMarketplaceEntities } from '../../ducks/marketplaceData.duck';
 import { manageDisableScrolling, isScrollingDisabled } from '../../ducks/UI.duck';
 import {
@@ -24,7 +24,6 @@ import {
 } from '../../ducks/stripeConnectAccount.duck';
 import { EditListingWizard, Footer, NamedRedirect, Page, UserNav } from '../../components';
 import { TopbarContainer } from '../../containers';
-
 import {
   requestAddAvailabilityException,
   requestDeleteAvailabilityException,
@@ -87,6 +86,14 @@ export const EditListingPageComponent = props => {
     updateStripeAccountError,
     onCoverUpload,
   } = props;
+
+  const ensuredCurrentUser = ensureCurrentUser(currentUser);
+  const isChildcareWorker = ensuredCurrentUser.attributes.profile.publicData && ensuredCurrentUser.attributes.profile.publicData.accountType === ACCOUNT_TYPE_CHILDCARE_WORKER
+  if (ensuredCurrentUser.id && !isChildcareWorker) {
+    return (
+      <NamedRedirect name="LandingPage" />
+    )
+  }
 
   const { id, type, returnURLType } = params;
   const isNewURI = type === LISTING_PAGE_PARAM_TYPE_NEW;
