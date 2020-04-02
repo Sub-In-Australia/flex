@@ -348,7 +348,7 @@ export class ListingPageComponent extends Component {
     };
 
     const listingImages = (listing, variantName) =>
-      (listing.images || [])
+      (listing.images || []).slice(1)
         .map(image => {
           const variants = image.attributes.variants;
           const variant = variants ? variants[variantName] : null;
