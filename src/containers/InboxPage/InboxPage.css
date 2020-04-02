@@ -328,6 +328,7 @@
 
 .stateName {
   /* This class is empty on purpose, it is used below for banned users */
+  text-align: right;
 }
 
 .stateActionNeeded {
@@ -392,4 +393,22 @@
   @media (--viewportMedium) {
     width: 240px;
   }
+}
+
+.buttonWrapper {
+  display: flex;
+}
+
+.actionButton {
+  min-height: 26px;
+  padding: 0 10px;
+}
+
+.btnAccept {
+  margin-right: 5px;
+}
+
+.errorMessage {
+  color: var(--failColor);
+  font-size: 12px;
 }
