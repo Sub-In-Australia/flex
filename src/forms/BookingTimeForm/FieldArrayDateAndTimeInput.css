@@ -13,3 +13,14 @@
   }
   cursor: pointer;
 }
+
+.fieldWrapper {
+  position: relative;
+}
+
+.removeButton {
+  font-size: 14px;
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+}

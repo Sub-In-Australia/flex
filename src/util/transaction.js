@@ -39,6 +39,8 @@ export const TRANSITION_EXPIRE = 'transition/expire';
 
 // Admin can also cancel the transition.
 export const TRANSITION_CANCEL = 'transition/cancel';
+export const TRANSITION_CANCEL_BY_PROVIDER = "transition/cancel-by-provider";
+export const TRANSITION_CANCEL_BY_CUSTOMER = "transition/cancel-by-customer";
 
 // The backend will mark the transaction completed.
 export const TRANSITION_COMPLETE = 'transition/complete';
@@ -147,6 +149,8 @@ const stateDescription = {
     [STATE_ACCEPTED]: {
       on: {
         [TRANSITION_CANCEL]: STATE_CANCELED,
+        [TRANSITION_CANCEL_BY_CUSTOMER]: STATE_CANCELED,
+        [TRANSITION_CANCEL_BY_PROVIDER]: STATE_CANCELED,
         [TRANSITION_COMPLETE]: STATE_DELIVERED,
       },
     },
@@ -300,6 +304,8 @@ export const isRelevantPastTransition = transition => {
   return [
     TRANSITION_ACCEPT,
     TRANSITION_CANCEL,
+    TRANSITION_CANCEL_BY_PROVIDER,
+    TRANSITION_CANCEL_BY_CUSTOMER,
     TRANSITION_COMPLETE,
     TRANSITION_CONFIRM_PAYMENT,
     TRANSITION_DECLINE,

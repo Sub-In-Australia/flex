@@ -1248,5 +1248,14 @@
   "UserNav.newListing": "Offer Childcare Services",
   "UserNav.editListing": "Edit Childcare Services",
   "UserNav.profileSettingsPage": "Edit user profile",
-  "UserNav.contactDetailsPage": "Account settings"
+  "UserNav.contactDetailsPage": "Account settings",
+  "TransactionPanel.cancelButton": "Cancel",
+  "TransactionPanel.cancelFailMessage": "Oops, canceling failed. Please try again.",
+  "InboxPage.total": "Total price: ",
+  "InboxPage.acceptErr": "Accpet error. Try Again",
+  "InboxPage.declineErr": "Decline error. Try Again",
+  "InboxPage.cancelErr": "Cancel error. Try Again",
+  "InboxPage.accept": "Accept",
+  "InboxPage.decline": "Decline",
+  "InboxPage.cancel": "Cancle"
 }
