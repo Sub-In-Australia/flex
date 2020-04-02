@@ -17,8 +17,8 @@ const SectionImages = props => {
     onManageDisableScrolling,
   } = props;
 
-  const hasImages = listing.images && listing.images.length > 0;
-  const firstImage = hasImages ? listing.images[0] : null;
+  const hasImages = listing.images && listing.images.length > 1;
+  const firstImage = hasImages ? listing.images[1] : null;
 
   // Action bar is wrapped with a div that prevents the click events
   // to the parent that would otherwise open the image carousel
@@ -66,7 +66,7 @@ const SectionImages = props => {
         usePortal
         onManageDisableScrolling={onManageDisableScrolling}
       >
-        <ImageCarousel images={listing.images} />
+        <ImageCarousel images={listing.images.slice(1) || []} />
       </Modal>
     </div>
   );

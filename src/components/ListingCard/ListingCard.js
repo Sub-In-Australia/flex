@@ -61,7 +61,7 @@ export const ListingCardComponent = props => {
   const { title = '', price, publicData } = currentListing.attributes;
   const slug = createSlug(title);
   const firstImage =
-    currentListing.images && currentListing.images.length > 0 ? currentListing.images[0] : null;
+    currentListing.images && currentListing.images.length > 1 ? currentListing.images[1] : null;
 
   const certificate = publicData
     ? getCertificateInfo(certificateConfig, publicData.certificate)

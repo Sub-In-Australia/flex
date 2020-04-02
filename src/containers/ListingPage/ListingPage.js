@@ -53,6 +53,7 @@ import SectionFeaturesMaybe from './SectionFeaturesMaybe';
 import SectionReviews from './SectionReviews';
 import SectionMapMaybe from './SectionMapMaybe';
 import css from './ListingPage.css';
+import SectionFirstAidCertMaybe from './SectionFirstAidCertMaybe';
 
 const MIN_LENGTH_FOR_LONG_WORDS_IN_TITLE = 16;
 
@@ -78,6 +79,7 @@ export class ListingPageComponent extends Component {
     this.state = {
       pageClassNames: [],
       imageCarouselOpen: false,
+      imageCertOpen: false,
       enquiryModalOpen: enquiryModalOpenForListingId === params.id,
     };
 
@@ -322,6 +324,15 @@ export class ListingPageComponent extends Component {
         imageCarouselOpen: true,
       });
     };
+
+    const handleViewCertPhotoClick = (e) => {
+      // Stop event from bubbling up to prevent image click handler
+      // trying to open the carousel as well.
+      e.stopPropagation();
+      this.setState({
+        imageCertOpen: true,
+      });
+    }
     const authorAvailable = currentListing && currentListing.author;
     const userAndListingAuthorAvailable = !!(currentUser && authorAvailable);
     const isOwnListing =
@@ -430,8 +441,16 @@ export class ListingPageComponent extends Component {
                     showContactUser={showContactUser}
                     onContactUser={this.onContactUser}
                   />
-                  <SectionDescriptionMaybe publicData={publicData} intl={intl}/>
+                  <SectionDescriptionMaybe publicData={publicData} intl={intl} />
                   <SectionFeaturesMaybe intl={intl} publicData={publicData} />
+                  <SectionFirstAidCertMaybe
+                    title={title}
+                    listing={currentListing}
+                    handleViewPhotosClick={handleViewCertPhotoClick}
+                    imageCarouselOpen={this.state.imageCertOpen}
+                    onImageCarouselClose={() => this.setState({ imageCertOpen: false })}
+                    onManageDisableScrolling={onManageDisableScrolling}
+                  />
                   <SectionMapMaybe
                     geolocation={geolocation}
                     publicData={publicData}

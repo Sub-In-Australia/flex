@@ -21,6 +21,12 @@
   padding-top: 29px;
 }
 
+.signupContent {
+  @media (--viewportLarge) {
+    flex-basis: 750px;
+  }
+}
+
 /* ================ Tabs & Form ================ */
 
 .tabs {
