@@ -32,7 +32,7 @@ import { TRANSITION_REQUEST_PAYMENT, TX_TRANSITION_ACTOR_CUSTOMER } from '../../
 import { LINE_ITEM_CUSTOMER_COMMISSION, LINE_ITEM_UNITS } from '../../util/types';
 import { unitDivisor, convertMoneyToNumber, convertUnitToSubUnit } from '../../util/currency';
 import { BookingBreakdown } from '../../components';
-import { last } from 'lodash';
+import { last, cloneDeep } from 'lodash';
 
 import css from './BookingTimeForm.css';
 import { customerCommission } from '../../marketplace-custom-config';
@@ -131,19 +131,38 @@ const EstimatedBreakdownMaybe = props => {
 
 export default EstimatedBreakdownMaybe;
 
+const normalizeTransactionForEstimate = (tx) => {
+  const normalizedTx = cloneDeep(tx);
+  if (!normalizedTx.quantity) {
+    const { start, end } = normalizedTx.booking.attributes;
+    normalizedTx.quantity = (end - start) / 3600000;
+
+    normalizedTx.startDate = start;
+    normalizedTx.endDate = end;
+    normalizedTx.unitType = LINE_ITEM_UNITS;
+    const unitLineItem = normalizedTx.attributes.lineItems.find(l => l.code === LINE_ITEM_UNITS);
+    normalizedTx.unitPrice = unitLineItem.unitPrice;
+  }
+  return normalizedTx;
+};
+
 const createVirtualMasterTransaction = (bookings) => {
   // calculate sum of quantity, booking start, booking end, totalPrice
+  const virtualBookings = cloneDeep(bookings);
+  virtualBookings[0] = normalizeTransactionForEstimate(virtualBookings[0]);
+
   const masterBooking = bookings.slice(1).reduce((masterTx, tx) => {
-    masterTx.quantity += tx.quantity;
-    masterTx.startDate = masterTx.startDate < tx.startDate ? masterTx.startDate : tx.startDate;
-    masterTx.endDate = masterTx.endDate > tx.endDate ? masterTx.endDate : tx.endDate;
+    const normalizedTx = normalizeTransactionForEstimate(tx);
+    masterTx.quantity += normalizedTx.quantity;
+    masterTx.startDate = masterTx.startDate < normalizedTx.startDate ? masterTx.startDate : normalizedTx.startDate;
+    masterTx.endDate = masterTx.endDate > normalizedTx.endDate ? masterTx.endDate : normalizedTx.endDate;
     return masterTx;
-  }, bookings[0]);
+  }, cloneDeep(virtualBookings[0]));
 
   return masterBooking;
 };
 
-export const EstimatedBreakdownTotalMaybe = props => {
+export const EstimatedBreakdownSummaryMaybe = props => {
   // compact the booking array;
   const bookings = props.bookingArray.filter(booking => booking);
 

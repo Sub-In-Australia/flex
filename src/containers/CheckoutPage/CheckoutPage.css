@@ -341,3 +341,33 @@
     margin: 0 48px;
   }
 }
+
+.bookingBreakdownSummaryContainer {
+  @media (--viewportLarge) {
+    margin: 0 48px;
+  }
+}
+
+.toggleBookingBreakdown {
+  @apply --marketplaceH4FontStyles;
+  color: var(--marketplaceColorDark);
+  &:hover {
+    color: var(--marketplaceColorLight);
+  }
+  @media (--viewportLarge) {
+    margin: 0 48px;
+  }
+  cursor: pointer;
+}
+
+.bookingDetailsContainer {
+  padding: 20px;
+  background-color: var(--attentionColorLight);
+}
+
+.bookingDetailIndex {
+  @media (--viewportLarge) {
+    margin: 0 48px;
+  }
+  margin-bottom: -5px;
+}
