@@ -189,7 +189,7 @@ const SearchFiltersComponent = props => {
     <div className={classes}>
       <div className={css.filters}>
         {dateRangeFilterElement}
-        {keywordFilterElement}
+        {/* {keywordFilterElement} */}
         {toggleSearchFiltersPanelButton}
       </div>
 

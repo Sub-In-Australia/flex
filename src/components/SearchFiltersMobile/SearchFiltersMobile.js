@@ -282,7 +282,7 @@ class SearchFiltersMobileComponent extends Component {
           {this.state.isFiltersOpenOnMobile ? (
             <div className={css.filtersWrapper}>
               {dateRangeFilterElement}
-              {keywordFilterElement}
+              {/* {keywordFilterElement} */}
             </div>
           ) : null}
 

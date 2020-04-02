@@ -15,7 +15,7 @@ const PrivacyPolicy = props => {
       {/* <p className={css.lastUpdated}>Last updated: November 22, 2019</p> */}
 
       <h3>
-        Registrar
+        Register
 </h3>
       <p>
         SUB IN AUSTRALIA service: Sharetribe Ltd
