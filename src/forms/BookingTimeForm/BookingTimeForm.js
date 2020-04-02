@@ -8,7 +8,7 @@ import { calculateQuantityFromHours, timestampToDate } from '../../util/dates';
 import { propTypes } from '../../util/types';
 import config from '../../config';
 import { Form, PrimaryButton } from '../../components';
-import EstimatedBreakdownMaybe, { EstimatedBreakdownTotalMaybe } from './EstimatedBreakdownMaybe';
+import EstimatedBreakdownMaybe, { EstimatedBreakdownSummaryMaybe } from './EstimatedBreakdownMaybe';
 import FieldArrayDateAndTimeInput from './FieldArrayDateAndTimeInput';
 import arrayMutators from 'final-form-arrays';
 import moment from 'moment';
@@ -29,8 +29,6 @@ export class BookingTimeFormComponent extends Component {
   }
 
   handleToggleBookingsDetails() {
-    // console.log('toggle');
-    // console.log(this.state.showBookingsDetails);
     this.setState({
       showBookingsDetails: !this.state.showBookingsDetails
     })
@@ -163,7 +161,7 @@ export class BookingTimeFormComponent extends Component {
               }
               {
                 shouldShowBookingsToggle && (
-                  <EstimatedBreakdownTotalMaybe bookingArray={bookingData}/>
+                  <EstimatedBreakdownSummaryMaybe bookingArray={bookingData}/>
                 )
               }
             </div>

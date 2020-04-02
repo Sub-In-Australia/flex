@@ -55,6 +55,7 @@ import {
 } from './CheckoutPage.duck';
 import { storeData, storedData, clearData } from './CheckoutPageSessionHelpers';
 import css from './CheckoutPage.css';
+import { EstimatedBreakdownSummaryMaybe } from '../../forms/BookingTimeForm/EstimatedBreakdownMaybe';
 
 const STORAGE_KEY = 'CheckoutPage';
 
@@ -101,6 +102,7 @@ export class CheckoutPageComponent extends Component {
       pageData: {},
       dataLoaded: false,
       submitting: false,
+      showBookingsDetails: false,
     };
     this.stripe = null;
 
@@ -108,6 +110,7 @@ export class CheckoutPageComponent extends Component {
     this.loadInitialData = this.loadInitialData.bind(this);
     this.handlePaymentIntent = this.handlePaymentIntent.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleToggleBookingsDetails = this.handleToggleBookingsDetails.bind(this);
   }
 
   componentDidMount() {
@@ -115,6 +118,12 @@ export class CheckoutPageComponent extends Component {
       this.loadInitialData();
     }
   }
+
+  handleToggleBookingsDetails() {
+    this.setState({
+      showBookingsDetails: !this.state.showBookingsDetails
+    })
+  };
 
   /**
    * Load initial data for the page
@@ -597,23 +606,62 @@ export class CheckoutPageComponent extends Component {
     const timeZone = currentListing.attributes.availabilityPlan
       ? currentListing.attributes.availabilityPlan.timezone
       : 'Etc/UTC';
+
+    const shouldShowBookingSummary = Array.isArray(tx);
+
+    const shouldShowBookingsToggle = tx.length >= 2;
+
+    const shouldShowBookingsDetails = !shouldShowBookingsToggle || this.state.showBookingsDetails;
+
+    const toggleBookingsDetailsTranslationId = this.state.showBookingsDetails ? "BookingTimeForm.hideBookingsDetails" : "BookingTimeForm.showBookingsDetails";
+
     const breakdown = (
       <React.Fragment>
-        {Array.isArray(tx) && (
-          speculatedTransaction.map((tx, i) => {
-            return (
-              <BookingBreakdown
-                className={css.bookingBreakdown}
-                userRole="customer"
-                unitType={config.bookingUnitType}
-                transaction={tx}
-                booking={txBooking[i]}
-                dateType={DATE_TYPE_DATETIME}
-                timeZone={timeZone}
-              />
-            );
-          })
-        )}
+        {
+          shouldShowBookingsToggle && (
+            <span className={css.toggleBookingBreakdown} onClick={this.handleToggleBookingsDetails}>
+              <FormattedMessage id={toggleBookingsDetailsTranslationId}/>
+            </span>
+          )
+        }
+        {
+          shouldShowBookingsDetails && (
+            <div className={shouldShowBookingsToggle && css.bookingDetailsContainer}>
+              {
+                speculatedTransaction.map((tx, i) => {
+                  return (
+                    <div>
+                      {shouldShowBookingsToggle && (<h5 className={css.bookingDetailIndex}>{`Booking #${i + 1}`}</h5>)}
+                      <BookingBreakdown
+                        className={css.bookingBreakdown}
+                        userRole="customer"
+                        unitType={config.bookingUnitType}
+                        transaction={tx}
+                        booking={txBooking[i]}
+                        dateType={DATE_TYPE_DATETIME}
+                        timeZone={timeZone}
+                      />
+                    </div>
+                  );
+                })
+              }
+            </div>
+          )
+        }
+        {
+          shouldShowBookingsToggle && this.state.showBookingsDetails && (
+            <span className={css.toggleBookingBreakdown} onClick={this.handleToggleBookingsDetails}>
+              <FormattedMessage id={toggleBookingsDetailsTranslationId}/>
+            </span>
+          )
+        }
+        {
+          shouldShowBookingSummary && (
+            <div className={css.bookingBreakdownSummaryContainer}>
+              <EstimatedBreakdownSummaryMaybe bookingArray={speculatedTransaction}/>
+            </div>
+          )
+        }
         {!Array.isArray(tx) && tx.id && txBooking.id && (
           <BookingBreakdown
             className={css.bookingBreakdown}
