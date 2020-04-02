@@ -27,6 +27,8 @@ class EditListingPhotosPanel extends Component {
       onChange,
       onSubmit,
       onRemoveImage,
+      onCoverUpload,
+      cover,
     } = this.props;
 
     const rootClass = rootClassName || css.root;
@@ -58,7 +60,7 @@ class EditListingPhotosPanel extends Component {
           disabled={disabled}
           ready={ready}
           fetchErrors={errors}
-          initialValues={{ images }}
+          initialValues={{ images, cover }}
           images={images}
           onImageUpload={onImageUpload}
           onSubmit={values => {
@@ -71,6 +73,8 @@ class EditListingPhotosPanel extends Component {
           saveActionMsg={submitButtonText}
           updated={panelUpdated}
           updateInProgress={updateInProgress}
+          onCoverUpload={onCoverUpload}
+          cover={cover}
         />
       </div>
     );

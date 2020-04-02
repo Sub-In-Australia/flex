@@ -22,6 +22,24 @@
   flex-shrink: 0;
 }
 
+.section {
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+.description {
+  margin-bottom: 20px;
+}
+
+.coverWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.changeImgText {
+  @apply --marketplaceButtonStylesPrimary;
+}
+
 .imagesField {
   flex-shrink: 0;
   margin: 0;

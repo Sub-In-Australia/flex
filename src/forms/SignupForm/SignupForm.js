@@ -34,6 +34,7 @@ const SignupFormComponent = props => (
         accountTypes,
         seekingOrProviding,
         highRiskWithCovid19,
+        loginOrSignupError,
       } = fieldRenderProps;
 
       // email
@@ -533,6 +534,7 @@ const SignupFormComponent = props => (
             />
           </Condition>
 
+          {loginOrSignupError}
           <div className={css.bottomWrapper}>
             <p className={css.bottomWrapperText}>
               <span className={css.termsText}>

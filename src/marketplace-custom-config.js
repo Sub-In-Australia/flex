@@ -38,7 +38,7 @@ export const keywordFilterConfig = {
   active: true,
 };
 
-export const customerCommission = 0.0175;
+export const customerCommission = 0.05;
 
 export const accountTypes = [{
   key: "childCareWorker",
@@ -68,3 +68,11 @@ export const highRiskWithCovid19 = [{
   key: "unsure",
   labelId: "Config.highRiskWithCovid19.unsure"
 }];
+
+export const yesNoAnswers = [{
+  key: "yes",
+  labelId: "Config.yesNoAnswers.yes"
+}, {
+  key: "no",
+  labelId: "Config.yesNoAnswers.no"
+}]

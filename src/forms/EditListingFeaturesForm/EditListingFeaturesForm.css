@@ -1,5 +1,24 @@
 @import '../../marketplace.css';
 
+:root {
+  /*
+    These variables are available in global scope through ":root"
+    element (<html> tag). Variables with the same names are going to
+    overwrite each other if CSS Properties' (PostCSS plugin)
+    configuration "preserve: true" is used - meaning that variables
+    are left to CSS bundle. We are planning to enable it in the future
+    since browsers support CSS Properties already.
+ */
+ 
+  --EditListingDescriptionForm_formMargins: {
+    margin-bottom: 24px;
+
+    @media (--viewportMedium) {
+      margin-bottom: 32px;
+    }
+  }
+}
+
 .root {
   /* Expand to available space */
   flex-grow: 1;
@@ -27,6 +46,10 @@
 
 .error {
   color: var(--failColor);
+}
+
+.generalField {
+  @apply --EditListingDescriptionForm_formMargins;
 }
 
 .submitButton {

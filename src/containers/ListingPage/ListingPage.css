@@ -586,3 +586,28 @@
   word-break: break-word;
   hyphens: auto;
 }
+
+
+/* Section description */
+.propertyWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--matterColorNegative);
+}
+
+.propertyLabel {
+  font-weight: var(--fontWeightRegular);
+  padding-right: 15px;
+  margin: 0 15px 0 0;
+  flex-basis: 70%;
+}
+
+.propertyValue {
+  font-weight: var(--fontWeightBold);
+  margin: 0 15px 0 0;
+  text-align: center;
+  flex-basis: 30%;
+}
