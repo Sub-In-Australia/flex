@@ -223,7 +223,7 @@ export class ProfilePageComponent extends Component {
         {hasBio ? <p className={css.bio}>{bio}</p> : null}
         {seekingOrProvidingText ? <p className={css.seekingOrProviding}>{seekingOrProvidingText}</p> : null}
         {highRiskWithCovid19Text ? highRiskWithCovid19Text : null}
-        {!isChildcareWorker ? (
+        {false && !isChildcareWorker ? (
           <>
             <p className={css.moreInfo}><label>{professionPositionLabel}:</label><span>{professionPosition}</span></p>
             <p className={css.moreInfo}><label>{linkedInLabel}:</label><span>{linkedIn}</span></p>

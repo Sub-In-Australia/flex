@@ -520,7 +520,7 @@ class ProfileSettingsFormComponent extends Component {
                   className={css.ableToSupplyVerificationOfIC}
                 />
 
-                <Condition when="accountType" is={ACCOUNT_TYPE_CHILDCARE_WORKER}>
+                {/* <Condition when="accountType" is={ACCOUNT_TYPE_CHILDCARE_WORKER}>
                   <FieldTextInput
                     className={css.generalField}
                     type="text"
@@ -565,7 +565,7 @@ class ProfileSettingsFormComponent extends Component {
                     placeholder={stateOfIssuePlaceholder}
                     validate={stateOfIssueRequired}
                   />
-                </Condition>
+                </Condition> */}
 
                 <Condition when="accountType" is={ACCOUNT_TYPE_MEDICAL_WORKER}>
                   <FieldTextInput
@@ -588,7 +588,7 @@ class ProfileSettingsFormComponent extends Component {
                       <option key={type.key} value={type.key}>{intl.formatMessage({ id: type.labelId })}</option>
                     ))}
                   </FieldSelect>
-                  <FieldTextInput
+                  {/* <FieldTextInput
                     className={css.generalField}
                     type="text"
                     id={'professionPosition'}
@@ -622,7 +622,7 @@ class ProfileSettingsFormComponent extends Component {
                     label={workingLocationLabel}
                     placeholder={workingLocationPlaceholder}
                     validate={workingLocationRequired}
-                  />
+                  /> */}
                 </Condition>
               </div>
               {submitError}
