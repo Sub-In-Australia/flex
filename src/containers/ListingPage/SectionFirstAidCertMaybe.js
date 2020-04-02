@@ -17,7 +17,7 @@ const SectionFirstAidCertMaybe = props => {
   const hasImages = listing.images && listing.images.length > 0;
   const firstImage = hasImages ? listing.images[0] : null;
 
-  return (
+  return hasImages ? (
     <div className={css.sectionFeatures}>
       <h2 className={css.featuresTitle}>
         <FormattedMessage id="ListingPage.firstAidCertTitle" />
@@ -50,7 +50,7 @@ const SectionFirstAidCertMaybe = props => {
         <ImageCarousel images={[listing.images[0]] || []} />
       </Modal>
     </div>
-  );
+  ) : null;
 };
 
 export default SectionFirstAidCertMaybe;
