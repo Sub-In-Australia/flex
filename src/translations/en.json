@@ -122,7 +122,7 @@
   "Config.highRiskWithCovid19.yes": "Yes",
   "Config.highRiskWithCovid19.no": "No",
   "Config.highRiskWithCovid19.unsure": "Unsure",
-  "Config.seekingOrProviding.providing": "Proving Childcare (I'm a Teacher, Early Childhood Educator or Carer)",
+  "Config.seekingOrProviding.providing": "Providing Childcare (I'm a Teacher, Early Childhood Educator or Carer)",
   "Config.seekingOrProviding.seeking": "Seeking Childcare (I'm a healthcare worker, frontline working or essential service worker)",
   "Config.yesNoAnswers.yes": "Yes",
   "Config.yesNoAnswers.no": "No",
@@ -238,7 +238,7 @@
   "EditListingFeaturesPanel.createListingTitle": "What are your certifications?",
   "EditListingFeaturesPanel.listingTitle": "your sessions",
   "EditListingFeaturesPanel.title": "Edit the certifications of {listingTitle}",
-  
+
   "EditListingDescriptionForm.childrenCheckID": "Working with Children Check ID",
   "EditListingDescriptionForm.childrenCheckIDPlaceholder": "Enter your answer...",
   "EditListingDescriptionForm.childrenCheckIDRequired": "This field is required",
@@ -1257,5 +1257,5 @@
   "InboxPage.cancelErr": "Cancel error. Try Again",
   "InboxPage.accept": "Accept",
   "InboxPage.decline": "Decline",
-  "InboxPage.cancel": "Cancle"
+  "InboxPage.cancel": "Cancel"
 }
