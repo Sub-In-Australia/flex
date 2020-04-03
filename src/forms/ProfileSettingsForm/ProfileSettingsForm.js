@@ -125,7 +125,7 @@ class ProfileSettingsFormComponent extends Component {
           const iReadTheTosRequiredMessage = intl.formatMessage({
             id: 'ProfileSettingsForm.iReadTheTosRequired',
           });
-          const iReadTheTosRequired = validators.required(iReadTheTosRequiredMessage);
+          const iReadTheTosRequired = validators.validTOS(iReadTheTosRequiredMessage);
 
           // Reference Check
           const referenceCheckLabel = intl.formatMessage({
@@ -352,7 +352,7 @@ class ProfileSettingsFormComponent extends Component {
                 <h3 className={css.sectionTitle}>
                   <FormattedMessage id="ProfileSettingsForm.yourProfilePicture" />
                 </h3>
-                <Field 
+                <Field
                   id="accountType"
                   name="accountType"
                   type="hidden"
@@ -363,7 +363,7 @@ class ProfileSettingsFormComponent extends Component {
                     const { name, type } = input;
 
                     return (
-                      <input 
+                      <input
                         id={id}
                         name={name}
                         type={type}

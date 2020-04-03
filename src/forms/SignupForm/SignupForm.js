@@ -138,7 +138,7 @@ const SignupFormComponent = props => (
       const iReadTheTosRequiredMessage = intl.formatMessage({
         id: 'SignupForm.iReadTheTosRequired',
       });
-      const iReadTheTosRequired = validators.required(iReadTheTosRequiredMessage);
+      const iReadTheTosRequired = validators.validTOS(iReadTheTosRequiredMessage);
 
       // Reference Check
       const referenceCheckLabel = intl.formatMessage({
