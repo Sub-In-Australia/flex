@@ -122,7 +122,7 @@
   "Config.highRiskWithCovid19.yes": "Yes",
   "Config.highRiskWithCovid19.no": "No",
   "Config.highRiskWithCovid19.unsure": "Unsure",
-  "Config.seekingOrProviding.providing": "Proving Childcare (I'm a Teacher, Early Childhood Educator or Carer)",
+  "Config.seekingOrProviding.providing": "Providing Childcare (I'm a Teacher, Early Childhood Educator or Carer)",
   "Config.seekingOrProviding.seeking": "Seeking Childcare (I'm a healthcare worker, frontline working or essential service worker)",
   "Config.yesNoAnswers.yes": "Yes",
   "Config.yesNoAnswers.no": "No",
@@ -238,7 +238,7 @@
   "EditListingFeaturesPanel.createListingTitle": "What are your certifications?",
   "EditListingFeaturesPanel.listingTitle": "your sessions",
   "EditListingFeaturesPanel.title": "Edit the certifications of {listingTitle}",
-  
+
   "EditListingDescriptionForm.childrenCheckID": "Working with Children Check ID",
   "EditListingDescriptionForm.childrenCheckIDPlaceholder": "Enter your answer...",
   "EditListingDescriptionForm.childrenCheckIDRequired": "This field is required",
@@ -810,7 +810,7 @@
   "ProfileSettingsForm.yourProfilePicture": "Your user profile picture",
   "ProfileSettingsForm.iReadTheTosLabel": "Are you aware of the risks involved and have you read the Terms & Conditions? Please do so and then write \"I, (your name), am aware of the risks and will take full responsibility. I HAVE READ and understand the Terms & Conditions.\" in the box below.",
   "ProfileSettingsForm.iReadTheTosPlaceholder": "Type information here...",
-  "ProfileSettingsForm.iReadTheTosRequired": "Please input the text",
+  "ProfileSettingsForm.iReadTheTosRequired": "Please enter the correct format.",
   "ProfileSettingsForm.referenceCheckLabel": "I am willing for Sub_In Australiatralia to conduct reference checks",
   "ProfileSettingsForm.ableToSupplyVerificationOfICLabel": "I am able to supply verification of identity and credentials",
   "ProfileSettingsForm.seekingOrProvidingLabel": "Are you seeking or providing childcare?",
@@ -940,7 +940,7 @@
   "SignupForm.highRiskWithCovid19Placeholder": "Please select one option",
   "SignupForm.iReadTheTosLabel": "Are you aware of the risks involved and have you read the Terms & Conditions? Please do so and then write \"I, (your name), am aware of the risks and will take full responsibility. I HAVE READ and understand the Terms & Conditions.\" in the box below.",
   "SignupForm.iReadTheTosPlaceholder": "Type information here...",
-  "SignupForm.iReadTheTosRequired": "Please input the text",
+  "SignupForm.iReadTheTosRequired": "Please enter the correct format",
   "SignupForm.lastNameLabel": "Last name",
   "SignupForm.lastNamePlaceholder": "Doe",
   "SignupForm.lastNameRequired": "You need to add a last name.",
@@ -1248,5 +1248,14 @@
   "UserNav.newListing": "Offer Childcare Services",
   "UserNav.editListing": "Edit Childcare Services",
   "UserNav.profileSettingsPage": "Edit user profile",
-  "UserNav.contactDetailsPage": "Account settings"
+  "UserNav.contactDetailsPage": "Account settings",
+  "TransactionPanel.cancelButton": "Cancel",
+  "TransactionPanel.cancelFailMessage": "Oops, canceling failed. Please try again.",
+  "InboxPage.total": "Total price: ",
+  "InboxPage.acceptErr": "Accpet error. Try Again",
+  "InboxPage.declineErr": "Decline error. Try Again",
+  "InboxPage.cancelErr": "Cancel error. Try Again",
+  "InboxPage.accept": "Accept",
+  "InboxPage.decline": "Decline",
+  "InboxPage.cancel": "Cancel"
 }

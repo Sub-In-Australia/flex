@@ -6,6 +6,7 @@ import { FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 
 import css from './FieldArrayDateAndTimeInput.css';
+import { InlineTextButton } from '../../components';
 
 const FieldArrayDateAndTimeInput = props => {
   const {
@@ -25,17 +26,21 @@ const FieldArrayDateAndTimeInput = props => {
         <div className={classes}>
           {fields.map((name, index) => {
             return (
-              <FieldDateAndTimeInput
-                {...rest}
-                style={{zIndex: fields.length - index}}
-                values={values[formName][index]
-                  ? values[formName][index]
-                  : {
-                    bookingStartDate: null,
-                    bookingEndDate: null
-                  }}
-                formId={name}
-              />);
+              <div style={{ zIndex: fields.length - index }} className={css.fieldWrapper}>
+                <FieldDateAndTimeInput
+                  {...rest}
+                  values={values[formName][index]
+                    ? values[formName][index]
+                    : {
+                      bookingStartDate: null,
+                      bookingEndDate: null
+                    }}
+                  formId={name}
+                />
+
+                {index > 0 ? <InlineTextButton onClick={() => fields.remove(index)} className={css.removeButton}>Remove</InlineTextButton> : null}
+              </div>
+              );
           })}
           <div
             className={addMoreClassName || css.addMore}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { arrayOf, bool, number, oneOf, shape, string } from 'prop-types';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
@@ -14,7 +14,7 @@ import {
   txIsPaymentExpired,
   txIsPaymentPending,
 } from '../../util/transaction';
-import { propTypes, DATE_TYPE_DATETIME } from '../../util/types';
+import { propTypes, DATE_TYPE_DATETIME, LINE_ITEM_CUSTOMER_COMMISSION, LINE_ITEM_PROVIDER_COMMISSION } from '../../util/types';
 import { createSlug, stringify } from '../../util/urlHelpers';
 import { ensureCurrentUser, ensureListing } from '../../util/data';
 import { getMarketplaceEntities } from '../../ducks/marketplaceData.duck';
@@ -36,12 +36,15 @@ import {
   Footer,
   IconSpinner,
   UserDisplayName,
+  PrimaryButton,
+  SecondaryButton,
 } from '../../components';
 import { TopbarContainer, NotFoundPage } from '../../containers';
 import config from '../../config';
 
-import { loadData } from './InboxPage.duck';
+import { loadData, acceptSale, declineSale, cancelSale } from './InboxPage.duck';
 import css from './InboxPage.css';
+import { formatMoney } from '../../util/currency';
 
 const formatDate = (intl, date) => {
   return {
@@ -219,9 +222,15 @@ const createListingLink = (listing, otherUser, searchParams = {}, className = ''
 };
 
 export const InboxItem = props => {
-  const { unitType, type, tx, intl, stateData } = props;
+  const { unitType, type, tx, intl, stateData, onAccept, onDecline, onCancel } = props;
   const { customer, provider, listing } = tx;
   const isOrder = type === 'order';
+
+  const defaultState = { inprogress: false, error: null };
+
+  const [acceptSate, setAcceptSate] = useState(defaultState);
+  const [declineState, setDeclineSate] = useState(defaultState);
+  const [cancelState, setCancelState] = useState(defaultState)
 
   const otherUser = isOrder ? provider : customer;
   const otherUserDisplayName = <UserDisplayName user={otherUser} intl={intl} />;
@@ -236,6 +245,67 @@ export const InboxItem = props => {
   });
 
   const listingLink = listing ? createListingLink(listing, otherUser) : null;
+
+  const totalLabel = <FormattedMessage id="InboxPage.total" />
+  const totalPrice = !isOrder
+  ? tx.attributes.payoutTotal
+  : tx.attributes.payinTotal;
+
+  const formattedTotalPrice = totalPrice ? formatMoney(intl, totalPrice) : null;
+
+  const customerCommissionLineItem = tx.attributes.lineItems ? tx.attributes.lineItems.find(
+    item => item.code === LINE_ITEM_CUSTOMER_COMMISSION && !item.reversal
+  ) : null ;
+
+  const providerCommissionLineItem = tx.attributes.lineItems ? tx.attributes.lineItems.find(
+    item => item.code === LINE_ITEM_PROVIDER_COMMISSION && !item.reversal
+  ) : null;
+
+  const customerCommission = customerCommissionLineItem ? customerCommissionLineItem.lineTotal : null;
+  const providerCommission = providerCommissionLineItem ? providerCommissionLineItem.lineTotal : null;
+  const formattedCustomerCommission = customerCommission ? formatMoney(intl, customerCommission) : null;
+  const formattedProviderCommission = providerCommission ? formatMoney(intl, providerCommission) : null;
+  const formattedCommission = !isOrder ? formattedProviderCommission : formattedCustomerCommission;
+  
+  const isShowAcceptDecline = !isOrder && txIsRequested(tx);
+  const isShowCancle = txIsAccepted(tx);
+
+  const handelSubmit = (e, action, changeSate) => {
+    e.preventDefault();
+    if(acceptSate.inProgress || declineState.inProgress) {
+      return;
+    }
+
+    changeSate({
+      error: null,
+      inprogress: true,
+    });
+
+    action(tx.id).then(() => {
+      changeSate({ error: null, inprogress: false });
+    }).catch(e => {
+      changeSate({ error: e, inprogress: false });
+    })
+  }
+
+  const handleCancel = (e) => {
+    e.preventDefault();
+    setCancelState({
+      error: null,
+      inprogress: true,
+    });
+
+    onCancel({transactionId: tx.id, isProvider: !isOrder }).then(() => {
+      setCancelState({ error: null, inprogress: false });
+    }).catch(e => {
+      setCancelState({ error: e, inprogress: false });
+    })
+  }
+
+  const actionErrMessage = acceptSate.error ? 
+  <FormattedMessage id="InboxPage.acceptErr"/> : declineState.error ? 
+  <FormattedMessage id="InboxPage.declineErr"/> : cancelState.error ?
+  <FormattedMessage id="InboxPage.cancelErr"/> : null;
 
   return (
     <div className={css.item}>
@@ -259,6 +329,17 @@ export const InboxItem = props => {
             tx={tx}
             unitType={unitType}
           />
+          {formattedCommission ?
+            <div className={classNames(css.bookingInfoWrapper, stateData.bookingClassName)}>
+              <FormattedMessage id="BookingBreakdown.commission" />
+              <div>&nbsp;</div>
+              {formattedCommission}
+            </div> : null}
+          <div className={classNames(css.bookingInfoWrapper, stateData.bookingClassName)}>
+              {totalLabel}
+              <div>&nbsp;</div>
+              {formattedTotalPrice}
+          </div>
         </div>
         <div className={css.itemState}>
           <div className={classNames(css.stateName, stateData.stateClassName)}>
@@ -269,6 +350,39 @@ export const InboxItem = props => {
             title={lastTransitionedAt.long}
           >
             {lastTransitionedAt.short}
+          </div>
+          <div className={classNames(css.stateName, stateData.stateClassName, css.actionWrapper)}>
+            {isShowAcceptDecline ?
+              <div className={css.buttonWrapper}>
+                <PrimaryButton
+                  className={classNames(css.actionButton, css.btnAccept)}
+                  onClick={(e) => handelSubmit(e, onAccept, setAcceptSate)}
+                  inProgress={acceptSate.inprogress}
+                  disabled={acceptSate.inprogress || declineState.inprogress}
+                >
+                  <FormattedMessage id="InboxPage.accept"/>
+            </PrimaryButton>
+                <SecondaryButton
+                  className={css.actionButton}
+                  onClick={(e) => handelSubmit(e, onDecline, setDeclineSate)}
+                  inProgress={declineState.inprogress}
+                  disabled={acceptSate.inprogress || declineState.inprogress}
+                >
+                  <FormattedMessage id="InboxPage.decline"/>
+            </SecondaryButton>
+              </div> : null}
+            {isShowCancle ?
+              <div className={css.buttonWrapper}>
+                <SecondaryButton
+                  className={css.actionButton}
+                  onClick={handleCancel}
+                  inProgress={cancelState.inprogress}
+                  disabled={cancelState.inprogress}
+                >
+                 <FormattedMessage id="InboxPage.cancel"/>
+            </SecondaryButton>
+              </div> : null}
+            <div className={css.errorMessage}>{actionErrMessage}</div>
           </div>
         </div>
       </NamedLink>
@@ -296,6 +410,9 @@ export const InboxPageComponent = props => {
     providerNotificationCount,
     scrollingDisabled,
     transactions,
+    onAccept,
+    onDecline,
+    onCancel,
   } = props;
   const { tab } = params;
   const ensuredCurrentUser = ensureCurrentUser(currentUser);
@@ -318,7 +435,7 @@ export const InboxPageComponent = props => {
     // Render InboxItem only if the latest transition of the transaction is handled in the `txState` function.
     return stateData ? (
       <li key={tx.id.uuid} className={css.listItem}>
-        <InboxItem unitType={unitType} type={type} tx={tx} intl={intl} stateData={stateData} />
+        <InboxItem unitType={unitType} type={type} tx={tx} intl={intl} stateData={stateData} onAccept={onAccept} onDecline={onDecline} onCancel={onCancel}/>
       </li>
     ) : null;
   };
@@ -475,8 +592,14 @@ const mapStateToProps = state => {
   };
 };
 
+const mapDispatchToProps = dispatch => ({
+  onAccept: transactionId => dispatch(acceptSale(transactionId)),
+  onDecline: transactionId => dispatch(declineSale(transactionId)),
+  onCancel: params => dispatch(cancelSale(params)),
+})
+
 const InboxPage = compose(
-  connect(mapStateToProps),
+  connect(mapStateToProps, mapDispatchToProps),
   injectIntl
 )(InboxPageComponent);
 

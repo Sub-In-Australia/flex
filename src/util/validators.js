@@ -227,6 +227,11 @@ export const composeValidators = (...validators) => value =>
   validators.reduce((error, validator) => error || validator(value), VALID);
 
 export const bookingDaysMustNotDuplicate = message => value => {
-  console.log(value)
+  console.log(value);
   return message;
+};
+
+export const validTOS = message => value => {
+  const validateRegEx = /(I, )([a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*){3,})(, am aware of the risks and will take full responsibility\. I HAVE READ and understand the Terms & Conditions.)$/;
+  return typeof value === 'string' && value.trim().match(validateRegEx) ? VALID : message;
 };
