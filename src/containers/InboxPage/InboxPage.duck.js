@@ -73,7 +73,7 @@ const fetchOrdersOrSalesError = e => ({
 
 // ================ Thunks ================ //
 
-const INBOX_PAGE_SIZE = 10;
+const INBOX_PAGE_SIZE = 50;
 
 export const loadData = (params, search) => (dispatch, getState, sdk) => {
   const { tab } = params;

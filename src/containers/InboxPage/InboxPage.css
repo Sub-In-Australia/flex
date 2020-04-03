@@ -412,3 +412,23 @@
   color: var(--failColor);
   font-size: 12px;
 }
+
+.bookingChainContainer {
+  padding: 25px 25px 15px;
+  border: 1px solid var(--matterColorAnti);
+  margin-bottom: 30px;
+}
+
+.bookingChainContainer .listItem:last-child {
+  margin-bottom: 0px;
+}
+
+.bookingChainTitle {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.bookingChainInfo {
+  margin-top: 0;
+  //margin-bottom: 0;
+}
