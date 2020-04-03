@@ -266,7 +266,7 @@ export const InboxItem = props => {
   const formattedCustomerCommission = customerCommission ? formatMoney(intl, customerCommission) : null;
   const formattedProviderCommission = providerCommission ? formatMoney(intl, providerCommission) : null;
   const formattedCommission = !isOrder ? formattedProviderCommission : formattedCustomerCommission;
-  
+
   const isShowAcceptDecline = !isOrder && txIsRequested(tx);
   const isShowCancle = txIsAccepted(tx);
 
@@ -302,8 +302,8 @@ export const InboxItem = props => {
     })
   }
 
-  const actionErrMessage = acceptSate.error ? 
-  <FormattedMessage id="InboxPage.acceptErr"/> : declineState.error ? 
+  const actionErrMessage = acceptSate.error ?
+  <FormattedMessage id="InboxPage.acceptErr"/> : declineState.error ?
   <FormattedMessage id="InboxPage.declineErr"/> : cancelState.error ?
   <FormattedMessage id="InboxPage.cancelErr"/> : null;
 
@@ -329,12 +329,12 @@ export const InboxItem = props => {
             tx={tx}
             unitType={unitType}
           />
-          {formattedCommission ?
-            <div className={classNames(css.bookingInfoWrapper, stateData.bookingClassName)}>
-              <FormattedMessage id="BookingBreakdown.commission" />
-              <div>&nbsp;</div>
-              {formattedCommission}
-            </div> : null}
+          {/*{formattedCommission ?*/}
+          {/*  <div className={classNames(css.bookingInfoWrapper, stateData.bookingClassName)}>*/}
+          {/*    <FormattedMessage id="BookingBreakdown.commission" />*/}
+          {/*    <div>&nbsp;</div>*/}
+          {/*    {formattedCommission}*/}
+          {/*  </div> : null}*/}
           <div className={classNames(css.bookingInfoWrapper, stateData.bookingClassName)}>
               {totalLabel}
               <div>&nbsp;</div>
@@ -502,7 +502,9 @@ export const InboxPageComponent = props => {
   ];
   const nav = <TabNav rootClassName={css.tabs} tabRootClassName={css.tab} tabs={tabs} />;
 
-  const transactionGroups = groupTransactions(transactions);
+  const transactionGroupsArray = groupTransactions({ transactions, tab });
+
+  // console.log({ transactionGroupsArray });
 
   return (
     <Page title={title} scrollingDisabled={scrollingDisabled}>
@@ -525,7 +527,19 @@ export const InboxPageComponent = props => {
           {error}
           <ul className={css.itemList}>
             {!fetchInProgress ? (
-              transactions.map(toTxItem)
+              transactionGroupsArray.map((group) => {
+                if (!group.isBookingChain) {
+                  return group.transactions.map(toTxItem);
+                }
+                return (
+                  <div className={css.bookingChainContainer} key={group.key}>
+                    <h4 className={css.bookingChainTitle}>Booking chain: <strong>{group.otherName}</strong></h4>
+                    <h5 className={css.bookingChainInfo}>Total price: <strong>A${group.totalPrice ? group.totalPrice / 100 : 0}</strong></h5>
+                    {group.transactions.map(toTxItem)}
+                  </div>
+                )
+              })
+              // transactions.map(toTxItem)
             ) : (
               <li className={css.listItemsLoading}>
                 <IconSpinner />
