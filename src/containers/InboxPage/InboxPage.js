@@ -533,7 +533,7 @@ export const InboxPageComponent = props => {
                 }
                 return (
                   <div className={css.bookingChainContainer} key={group.key}>
-                    <h4 className={css.bookingChainTitle}>Booking chain: <strong>{group.otherName}</strong></h4>
+                    <h4 className={css.bookingChainTitle}>Booking requests: <strong>{group.otherName}</strong></h4>
                     <h5 className={css.bookingChainInfo}>Total price: <strong>A${group.totalPrice ? group.totalPrice / 100 : 0}</strong></h5>
                     {group.transactions.map(toTxItem)}
                   </div>
